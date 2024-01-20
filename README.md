@@ -1,0 +1,16 @@
+# my-git-client
+
+## 작업기간
+
+- 2024.01.19. ~
+
+## 기술스택 및 개발환경
+
+- `.NET` - v8.0.101
+- `Avalonia` - v11.0.7
+- `LibGit2Sharp` - v0.29.0
+
+## 개발환경 구동 절차
+
+1. `dotnet build`
+2. `dotnet run`
