@@ -12,7 +12,13 @@ namespace MyGitClient.ViewModels;
 
 public class MainWindowViewModel : ViewModelBase
 {
+    public MainWindowViewModel()
+    {
+        
+    }
+
     #region Properties
+    /** <summary>최신 Repository 텍스트</summary> */
     private string _repositoryPath = "Load Git repository...";
     public string RepositoryPath
     {
@@ -20,24 +26,28 @@ public class MainWindowViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _repositoryPath, value);
     }
 
+    /** <summary>최신 브랜치 텍스트</summary> */
     private string? _currentBranchText;
     public string? CurrentBranchText {
         get => _currentBranchText;
         set => this.RaiseAndSetIfChanged(ref _currentBranchText, value);
     }
 
+    /** <summary>최신 커밋 텍스트</summary> */
     private string? _latestCommitText;
     public string? LatestCommitText {
         get => _latestCommitText;
         set => this.RaiseAndSetIfChanged(ref _latestCommitText, value);
     }
 
+    /** <summary>최신 커밋 일시 텍스트</summary> */
     private string? _latestCommitDateText;
     public string? LatestCommitDateText {
         get => _latestCommitDateText;
         set => this.RaiseAndSetIfChanged(ref _latestCommitDateText, value);
     }
 
+    /** <summary>액션버튼 Border 표시 여부</summary> */
     private bool? _actionButtonsBorderVisible = false;
     public bool? ActionButtonsBorderVisible {
         get => _actionButtonsBorderVisible;
