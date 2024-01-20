@@ -27,6 +27,7 @@ public partial class MainWindow : Window
     }
 
     /** <summary>버튼을 클릭, Git 저장소 정보를 가져와 화면에 표시한다.</summary> */
+    [System.Obsolete]
     private async void UpdateRepoInfoButton_Clicked(object source, RoutedEventArgs e)
     {
         var folderDialog = new OpenFolderDialog
