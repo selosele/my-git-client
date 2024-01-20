@@ -36,8 +36,8 @@
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Center"
                 Content="{Binding RepositoryPath}"
-                Click="UpdateRepoInfoButton_Clicked">
-            </Button>
+                Click="UpdateRepoInfoButton_Clicked"
+            />
         </Border>
         <Border Background="White" BorderBrush="Black" BorderThickness="1" DockPanel.Dock="Top" IsVisible="{Binding ActionButtonsBorderVisible}">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
