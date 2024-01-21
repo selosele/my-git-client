@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Threading.Tasks;
 using LibGit2Sharp;
+using Avalonia.Controls;
 using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
 using ReactiveUI;
@@ -14,7 +15,8 @@ public class MainWindowViewModel : ViewModelBase
 {
     public MainWindowViewModel()
     {
-        
+        //UpdateRepoInfo(@"C:\Users\dmitr\Desktop\p\repo\selosele-pub");
+        LeftMenuItems = ["Status", "History"];
     }
 
     #region Properties
@@ -58,50 +60,79 @@ public class MainWindowViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _actionButtonsBorderVisible, value);
     }
 
+    /** <summary>커밋 정보 데이타그리드 표시 여부</summary> */
+    private bool? _commitsDataGridVisible = false;
+    public bool? CommitsDataGridVisible
+    {
+        get => _commitsDataGridVisible;
+        set => this.RaiseAndSetIfChanged(ref _commitsDataGridVisible, value);
+    }
+
     /** <summary>커밋 정보 목록</summary> */
-    public ObservableCollection<CommitInfo>? Commits { get; set; }
+    private ObservableCollection<CommitInfo>? _commits;
+    public ObservableCollection<CommitInfo>? Commits
+    {
+        get => _commits;
+        set => this.RaiseAndSetIfChanged(ref _commits, value);
+    }
+
+    /** <summary>레프트 메뉴 아이템</summary> */
+    public ObservableCollection<string>? LeftMenuItems { get; set; }
     #endregion
 
     /** <summary>Git 저장소 정보를 가져와 화면에 표시한다.</summary> */
-    public async void UpdateRepoInfo(string repositoryPath)
+    [Obsolete]
+    public async void UpdateRepoInfo()
     {
-        try
+        var folderDialog = new OpenFolderDialog
         {
-            if (string.IsNullOrWhiteSpace(repositoryPath) || !Directory.Exists(repositoryPath))
-            {
-                // 경로가 유효하지 않을 경우 사용자에게 메시지를 표출한다.
-                await AlertBox("Invalid repository path");
-                return;
-            }
+            Title = "Select Git Repository Folder",
+            Directory = Directory.GetCurrentDirectory() // 기본 경로 설정
+        };
 
-            using var repo = new Repository(repositoryPath);
-            Branch currentBranch = repo.Head;
-            Commit latestCommit = currentBranch.Tip;
+        var selectedFolderPath = await folderDialog.ShowAsync(Views.MainWindow.Instance);
 
-            var commits = new List<CommitInfo>();
-            foreach (Commit commit in repo.Commits)
-            {
-                commits.Add(
-                    new CommitInfo(
-                        commit.Sha,
-                        commit.Author.Name,
-                        commit.Author.Email,
-                        commit.Author.When.ToString(),
-                        commit.Message
-                    )
-                );
-            }
-            Commits = new ObservableCollection<CommitInfo>(commits);
-
-            RepositoryPath = repositoryPath;
-            CurrentBranchText = $"Current Branch: {currentBranch.FriendlyName}";
-            LatestCommitText = $"Latest Commit: {latestCommit.Message}";
-            LatestCommitDateText = $"Latest Commit Date: {latestCommit.Author.When}";
-            ActionButtonsBorderVisible = true;
-        }
-        catch (Exception ex)
+        if (!string.IsNullOrEmpty(selectedFolderPath))
         {
-            await AlertBox(ex.Message);
+            try
+            {
+                if (string.IsNullOrWhiteSpace(selectedFolderPath) || !Directory.Exists(selectedFolderPath))
+                {
+                    // 경로가 유효하지 않을 경우 사용자에게 메시지를 표출한다.
+                    await AlertBox("Invalid repository path");
+                    return;
+                }
+
+                using var repo = new Repository(selectedFolderPath);
+                Branch currentBranch = repo.Head;
+                Commit latestCommit = currentBranch.Tip;
+
+                var commits = new List<CommitInfo>();
+                foreach (Commit commit in repo.Commits)
+                {
+                    commits.Add(
+                        new CommitInfo(
+                            commit.Sha,
+                            commit.Author.Name,
+                            commit.Author.Email,
+                            commit.Author.When.ToString("dd MMM yyyy HH:mm"),
+                            commit.Message.Trim()
+                        )
+                    );
+                }
+                Commits = new ObservableCollection<CommitInfo>(commits);
+
+                RepositoryPath = selectedFolderPath;
+                CurrentBranchText = $"Current Branch: {currentBranch.FriendlyName}";
+                LatestCommitText = $"Latest Commit: {latestCommit.Message.Trim()}";
+                LatestCommitDateText = $"Latest Commit Date: {latestCommit.Author.When}";
+                ActionButtonsBorderVisible = true;
+                CommitsDataGridVisible = true;
+            }
+            catch (Exception ex)
+            {
+                await AlertBox(ex.Message);
+            }
         }
     }
 

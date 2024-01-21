@@ -18,7 +18,7 @@
     <DockPanel LastChildFill="True">
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="_File">
-                <MenuItem Header="_Open..." Click="UpdateRepoInfoButton_Clicked" />
+                <MenuItem Header="_Open..." Command="{Binding UpdateRepoInfo}" />
                 <Separator/>
                 <MenuItem Header="_Exit" Click="ExitMenuItem_Clicked" />
             </MenuItem>
@@ -27,7 +27,7 @@
                 <MenuItem Header="Paste" />
             </MenuItem>
             <MenuItem Header="_Help">
-                <MenuItem Header="About the GitSquid" />
+                <MenuItem Header="About the MyGitClient" />
             </MenuItem>
         </Menu>
 
@@ -36,7 +36,7 @@
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Center"
                 Content="{Binding RepositoryPath}"
-                Click="UpdateRepoInfoButton_Clicked"
+                Command="{Binding UpdateRepoInfo}"
             />
         </Border>
         <Border Background="White" BorderBrush="Black" BorderThickness="1" DockPanel.Dock="Top" IsVisible="{Binding ActionButtonsBorderVisible}">
@@ -46,11 +46,14 @@
                 <Button Content="Push" Margin="5" Width="100" HorizontalContentAlignment="Center" />
             </StackPanel>
         </Border>
-        <Border Height="25" Background="White" BorderBrush="Black" BorderThickness="1" DockPanel.Dock="Bottom">
+        <!-- <Border Height="25" Background="White" BorderBrush="Black" BorderThickness="1" DockPanel.Dock="Bottom">
             <TextBlock Foreground="Black">Dock = "Bottom"</TextBlock>
-        </Border>
+        </Border> -->
         <Border Width="200" Background="White" BorderBrush="Black" BorderThickness="1" DockPanel.Dock="Left">
-            <TextBlock Foreground="Black">Dock = "Left"</TextBlock>
+            <ListBox
+                ItemsSource="{Binding LeftMenuItems}"
+                SelectionChanged="LeftListBox_SelectionChanged"
+            />
         </Border>
         <Border Background="White" BorderBrush="Black" BorderThickness="1" Padding="10">
             <StackPanel Orientation="Vertical">
@@ -59,24 +62,37 @@
                     <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Text="{Binding LatestCommitText}" />
                     <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Text="{Binding LatestCommitDateText}" />
                 </StackPanel>
+
+                <StackPanel
+                    Name="StatusStackPanel"
+                    Margin="0,10,0,10"
+                    IsVisible="False">
+                    
+                    <TextBlock Foreground="Black">status area</TextBlock>
+                </StackPanel>
                 
-                <StackPanel Margin="0,10,0,10">
-                    <!-- <DataGrid
+                <StackPanel
+                    Name="HistoryStackPanel"
+                    Margin="0,10,0,10"
+                    IsVisible="True">
+
+                    <DataGrid
+                        IsVisible="{Binding CommitsDataGridVisible}"
                         ItemsSource="{Binding Commits}"
                         IsReadOnly="True"
                         GridLinesVisibility="All"
                         BorderThickness="1"
                         BorderBrush="Gray"
-                        x:DataType="vm:CommitInfo">
+                        Height="350">
 
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Sha" Binding="{Binding Sha}" />
-                            <DataGridTextColumn Header="Author Name" Binding="{Binding AuthorName}" />
-                            <DataGridTextColumn Header="Author Email" Binding="{Binding AuthorEmail}" />
-                            <DataGridTextColumn Header="Author When" Binding="{Binding AuthorWhen}" />
-                            <DataGridTextColumn Header="Message" Binding="{Binding Message}" />
+                            <DataGridTextColumn Header="Description" Width="340" Binding="{Binding Message}" />
+                            <DataGridTextColumn Header="Date" Width="*" Binding="{Binding AuthorWhen}" />
+                            <DataGridTextColumn Header="Author" Width="*" Binding="{Binding AuthorName}" />
+                            <!-- <DataGridTextColumn Header="Author Email" Width="*" Binding="{Binding AuthorEmail}" /> -->
+                            <DataGridTextColumn Header="Commit" Width="*" Binding="{Binding Sha}" />
                         </DataGrid.Columns>
-                    </DataGrid> -->
+                    </DataGrid>
                 </StackPanel>
             </StackPanel>
         </Border>
