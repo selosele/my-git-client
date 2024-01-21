@@ -28,21 +28,24 @@ public class MainWindowViewModel : ViewModelBase
 
     /** <summary>최신 브랜치 텍스트</summary> */
     private string? _currentBranchText;
-    public string? CurrentBranchText {
+    public string? CurrentBranchText
+    {
         get => _currentBranchText;
         set => this.RaiseAndSetIfChanged(ref _currentBranchText, value);
     }
 
     /** <summary>최신 커밋 텍스트</summary> */
     private string? _latestCommitText;
-    public string? LatestCommitText {
+    public string? LatestCommitText
+    {
         get => _latestCommitText;
         set => this.RaiseAndSetIfChanged(ref _latestCommitText, value);
     }
 
     /** <summary>최신 커밋 일시 텍스트</summary> */
     private string? _latestCommitDateText;
-    public string? LatestCommitDateText {
+    public string? LatestCommitDateText
+    {
         get => _latestCommitDateText;
         set => this.RaiseAndSetIfChanged(ref _latestCommitDateText, value);
     }
