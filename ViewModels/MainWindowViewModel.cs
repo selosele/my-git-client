@@ -49,7 +49,8 @@ public class MainWindowViewModel : ViewModelBase
 
     /** <summary>액션버튼 Border 표시 여부</summary> */
     private bool? _actionButtonsBorderVisible = false;
-    public bool? ActionButtonsBorderVisible {
+    public bool? ActionButtonsBorderVisible
+    {
         get => _actionButtonsBorderVisible;
         set => this.RaiseAndSetIfChanged(ref _actionButtonsBorderVisible, value);
     }
