@@ -10,10 +10,13 @@ public partial class MainWindow : Window
     #region Properties
     /** <summary>메인 윈도우 인스턴스</summary> */
     public static MainWindow? Instance;
+
     /** <summary>뷰모델 인스턴스</summary> */
     private readonly MainWindowViewModel _viewModel;
+    
     /** <summary>Status 영역 StackPanel</summary> */
     private StackPanel? _statusStackPanel;
+    
     /** <summary>History 영역 StackPanel</summary> */
     private StackPanel? _historyStackPanel;
     #endregion
