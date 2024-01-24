@@ -57,18 +57,12 @@ public partial class MainWindow : Window
             switch (selectedItem)
             {
                 case "파일 상태":
-                    if (_statusStackPanel != null && _historyStackPanel != null)
-                    {
-                        _statusStackPanel.IsVisible = true;
-                        _historyStackPanel.IsVisible = false;
-                    }
+                    _statusStackPanel!.IsVisible = true;
+                    _historyStackPanel!.IsVisible = false;
                     break;
                 case "History":
-                    if (_statusStackPanel != null && _historyStackPanel != null)
-                    {
-                        _statusStackPanel.IsVisible = false;
-                        _historyStackPanel.IsVisible = true;
-                    }
+                    _statusStackPanel!.IsVisible = false;
+                    _historyStackPanel!.IsVisible = true;
                     break;
             }
         }
