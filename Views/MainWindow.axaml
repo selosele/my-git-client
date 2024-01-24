@@ -16,22 +16,22 @@
     </Design.DataContext>
 
     <DockPanel LastChildFill="True">
-        <Menu DockPanel.Dock="Top">
-            <MenuItem Header="_File">
+        <Menu DockPanel.Dock="Top" Background="#0844a4">
+            <MenuItem Header="_File" Foreground="#fff">
                 <MenuItem Header="_Open..." Command="{Binding UpdateRepoInfo}" />
                 <Separator/>
                 <MenuItem Header="_Exit" Click="ExitMenuItem_Clicked" />
             </MenuItem>
-            <MenuItem Header="_Edit">
+            <MenuItem Header="_Edit" Foreground="#fff">
                 <MenuItem Header="Copy" />
                 <MenuItem Header="Paste" />
             </MenuItem>
-            <MenuItem Header="_Help">
+            <MenuItem Header="_Help" Foreground="#fff">
                 <MenuItem Header="About the MyGitClient" />
             </MenuItem>
         </Menu>
 
-        <Border Background="White" BorderBrush="Black" BorderThickness="1" DockPanel.Dock="Top">
+        <Border Background="#fff" DockPanel.Dock="Top">
             <Button
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Center"
@@ -39,23 +39,35 @@
                 Command="{Binding UpdateRepoInfo}"
             />
         </Border>
-        <Border Background="White" BorderBrush="Black" BorderThickness="1" DockPanel.Dock="Top" IsVisible="{Binding ActionButtonsBorderVisible}">
+        <Border Background="#fff" DockPanel.Dock="Top" IsVisible="{Binding ActionButtonsBorderVisible}">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <StackPanel.Styles>
+                    <Style Selector="Button">
+                        <Setter Property="Background" Value="#fff" />
+                        <Setter Property="BorderBrush" Value="#0844a4" />
+                    </Style>
+
+                    <Style Selector="Button:pointerover /template/ ContentPresenter">
+                        <Setter Property="Background" Value="#e2f0ff" />
+                        <Setter Property="BorderBrush" Value="#0844a4" />
+                    </Style>
+                </StackPanel.Styles>
+                
                 <Button Content="Commit" Margin="5" Width="100" HorizontalContentAlignment="Center" />
                 <Button Content="Pull" Margin="5" Width="100" HorizontalContentAlignment="Center" />
                 <Button Content="Push" Margin="5" Width="100" HorizontalContentAlignment="Center" />
             </StackPanel>
         </Border>
-        <!-- <Border Height="25" Background="White" BorderBrush="Black" BorderThickness="1" DockPanel.Dock="Bottom">
+        <!-- <Border Height="25" Background="#fff" BorderBrush="#ccc" BorderThickness="1" DockPanel.Dock="Bottom">
             <TextBlock Foreground="Black">Dock = "Bottom"</TextBlock>
         </Border> -->
-        <Border Width="200" Background="White" BorderBrush="Black" BorderThickness="1" DockPanel.Dock="Left">
+        <Border Width="200" Background="#fff" BorderBrush="#ccc" BorderThickness="0,1,0,0" DockPanel.Dock="Left">
             <ListBox
                 ItemsSource="{Binding LeftMenuItems}"
                 SelectionChanged="LeftListBox_SelectionChanged"
             />
         </Border>
-        <Border Background="White" BorderBrush="Black" BorderThickness="1" Padding="10">
+        <Border Background="#fff" BorderBrush="#ccc" BorderThickness="1" Padding="10">
             <StackPanel Orientation="Vertical">
                 <StackPanel>
                     <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Text="{Binding CurrentBranchText}" />
@@ -82,11 +94,17 @@
                         IsReadOnly="True"
                         GridLinesVisibility="All"
                         BorderThickness="1"
-                        BorderBrush="Gray"
+                        BorderBrush="#ccc"
                         Height="350">
 
+                        <DataGrid.Styles>
+                            <Style Selector="DataGridColumnHeader">
+                                <Setter Property="Background" Value="#e2f0ff" />
+                            </Style>
+                        </DataGrid.Styles>
+
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Description" Width="340" Binding="{Binding Message}" />
+                            <DataGridTextColumn Header="Description" Width="350" Binding="{Binding Message}" />
                             <DataGridTextColumn Header="Date" Width="*" Binding="{Binding AuthorWhen}" />
                             <DataGridTextColumn Header="Author" Width="*" Binding="{Binding AuthorName}" />
                             <!-- <DataGridTextColumn Header="Author Email" Width="*" Binding="{Binding AuthorEmail}" /> -->
