@@ -68,12 +68,12 @@ public class MainWindowViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _commitsDataGridVisible, value);
     }
 
-    /** <summary>파일 변경 정보 목록</summary> */
-    private ObservableCollection<string>? _changes;
-    public ObservableCollection<string>? Changes
+    /** <summary>스테이지에 올라가지 않은 파일 목록</summary> */
+    private ObservableCollection<string>? _unstaged;
+    public ObservableCollection<string>? Unstaged
     {
-        get => _changes;
-        set => this.RaiseAndSetIfChanged(ref _changes, value);
+        get => _unstaged;
+        set => this.RaiseAndSetIfChanged(ref _unstaged, value);
     }
 
     /** <summary>커밋 정보 목록</summary> */
@@ -164,21 +164,22 @@ public class MainWindowViewModel : ViewModelBase
     /** <summary>변경된 파일 목록을 가져와 화면에 표시한다.</summary> */
     public void UpdateStatusInfo(RepositoryStatus status)
     {
-        var changedList = new List<string>();
+        var unstagedList = new List<string>();
 
         // 수정된 파일
-        foreach (var entry in status.Modified) changedList.Add(entry.FilePath);
+        foreach (var entry in status.Modified) unstagedList.Add(entry.FilePath);
 
         // 추가된 파일
-        foreach (var entry in status.Added) changedList.Add(entry.FilePath);
+        foreach (var entry in status.Added) unstagedList.Add(entry.FilePath);
 
         // 삭제된 파일
-        foreach (var entry in status.Removed) changedList.Add(entry.FilePath);
+        foreach (var entry in status.Removed) unstagedList.Add(entry.FilePath);
 
         // 추적되지 않은 파일
-        foreach (var entry in status.Untracked) changedList.Add(entry.FilePath);
+        foreach (var entry in status.Untracked) unstagedList.Add(entry.FilePath);
             
-        Changes = new ObservableCollection<string>(changedList);
+        // 스테이지에 올라가지 않은 파일 목록
+        Unstaged = new ObservableCollection<string>(unstagedList);
     }
 
     /** <summary>commit을 수행한다.</summary> */

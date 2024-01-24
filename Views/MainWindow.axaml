@@ -7,7 +7,7 @@
         x:Class="MyGitClient.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
-        Title="MyGitClient v0.0.1">
+        Title="My Git Client v0.0.1">
 
     <Design.DataContext>
         <!-- This only sets the DataContext for the previewer in an IDE,
@@ -27,7 +27,7 @@
                 <MenuItem Header="붙여넣기" />
             </MenuItem>
             <MenuItem Header="_도움말" Foreground="#fff">
-                <MenuItem Header="MyGitClient에 대해서" />
+                <MenuItem Header="My Git Client에 대해서" />
             </MenuItem>
         </Menu>
 
@@ -81,7 +81,7 @@
                     IsVisible="False">
                     
                     <ListBox
-                        ItemsSource="{Binding Changes}"
+                        ItemsSource="{Binding Unstaged}"
                     />
                 </StackPanel>
                 
