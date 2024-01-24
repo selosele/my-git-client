@@ -337,9 +337,13 @@ public class MainWindowViewModel : ViewModelBase
         
         string filePath = Path.Combine(RepositoryPath, ".gitignore");
 
+        // .gitignore 파일이 없으면 .git 폴더만 제외시킨다.
         if (!File.Exists(filePath))
+        {
+            excludedWatchPath.Add(@"\.git");
             return;
-
+        }
+            
         // 파일의 모든 줄을 읽어온다.
         string[] lines = File.ReadAllLines(filePath);
 
