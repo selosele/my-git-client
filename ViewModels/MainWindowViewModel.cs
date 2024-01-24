@@ -8,6 +8,7 @@ using Avalonia.Controls;
 using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
 using ReactiveUI;
+using System.Linq;
 
 namespace MyGitClient.ViewModels;
 
@@ -15,11 +16,17 @@ public class MainWindowViewModel : ViewModelBase
 {
     public MainWindowViewModel()
     {
-        UpdateRepoInfo(@"D:\workspace\MyGitClient");
+        //UpdateRepoInfo(@"D:\workspace\MyGitClient");
         LeftMenuItems = ["파일 상태", "History"];
     }
 
     #region Fields
+    /** <summary>FileSystemWatcher 인스턴스</summary> */
+    private readonly FileSystemWatcher watcher = new();
+
+    /** <summary>FileSystemWatcher의 파일 변경 감지에 제외할 디렉터리들</summary> */
+    private readonly List<string> excludedWatchPath = [];
+
     /** <summary>최신 Repository 텍스트</summary> */
     private string _repositoryPath = "Git 저장소 불러오기...";
     public string RepositoryPath
@@ -98,7 +105,7 @@ public class MainWindowViewModel : ViewModelBase
 
     /** <summary>Git 저장소 경로를 선택한다.</summary> */
     [Obsolete]
-    public async void SelectRepoInfo()
+    public async Task SelectRepoInfo()
     {
         var folderDialog = new OpenFolderDialog
         {
@@ -121,6 +128,9 @@ public class MainWindowViewModel : ViewModelBase
 
                 // Git 저장소 정보 출력
                 UpdateRepoInfo(selectedFolderPath);
+
+                // Git 로컬 저장소 파일의 변경을 실시간으로 감지
+                FireWatchFileChanges();
             }
             catch (Exception ex)
             {
@@ -191,13 +201,13 @@ public class MainWindowViewModel : ViewModelBase
     }
 
     /** <summary>commit을 수행한다.</summary> */
-    public async void Commit()
+    public async Task Commit()
     {
         await AlertBox("준비 중입니다.");
     }
 
     /** <summary>pull을 수행한다.</summary> */
-    public async void Pull()
+    public async Task Pull()
     {
         try
         {
@@ -254,9 +264,91 @@ public class MainWindowViewModel : ViewModelBase
     }
 
     /** <summary>push를 수행한다.</summary> */
-    public async void Push()
+    public async Task Push()
     {
         await AlertBox("준비 중입니다.");
+    }
+
+    /** <summary>Git 로컬 저장소 파일의 변경을 실시간으로 감지한다.</summary> */
+    private void FireWatchFileChanges()
+    {
+        // .gitignore 파일을 읽어서 경로들을 파일 변경 감지 제외 디렉터리 리스트에 담는다.
+        ReadGitIgnoreFile();
+
+        // 파일 변경을 실시간으로 감지
+        WatchFileChanges(RepositoryPath);
+    }
+
+    /** <summary>파일의 변경을 실시간으로 감지한다.</summary> */
+    private void WatchFileChanges(string repositoryPath)
+    {
+        // FileSystemWatcher 생성
+        watcher.Path = repositoryPath;
+        watcher.EnableRaisingEvents = true;
+        watcher.IncludeSubdirectories = true;
+        watcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName;
+
+        // 파일 변경 이벤트 핸들러 등록
+        watcher.Changed += OnFileChanged;
+        watcher.Created += OnFileChanged;
+        watcher.Deleted += OnFileChanged;
+        watcher.Renamed += OnFileRenamed;
+    }
+
+    /** <summary>파일의 변경을 감지한다.</summary> */
+    private void OnFileChanged(object sender, FileSystemEventArgs e)
+    {
+        if (IsExcludedPath(e.FullPath))
+            return;
+            
+        Console.WriteLine($"Detect the change: {e.FullPath} - {e.ChangeType}");
+
+        // Git 저장소 정보 출력
+        UpdateRepoInfo(RepositoryPath);
+    }
+
+    /** <summary>파일명의 변경을 감지한다.</summary> */
+    private void OnFileRenamed(object source, RenamedEventArgs e)
+    {
+        if (IsExcludedPath(e.FullPath))
+            return;
+
+        Console.WriteLine("File: {0} renamed to {1}", e.OldFullPath, e.FullPath);
+
+        // Git 저장소 정보 출력
+        UpdateRepoInfo(RepositoryPath);
+    }
+
+    /** <summary>파일 변경 감지 시, 감지에 제외한 디렉터리 발견 여부를 반환한다.</summary> */
+    private bool IsExcludedPath(string fullPath)
+    {
+        foreach (var path in excludedWatchPath)
+        {
+            if (fullPath.Contains(path))
+                return true;
+        }
+        return false;
+    }
+
+    /** <summary>.gitignore 파일을 읽어 배열에 담는다.</summary> */
+    private void ReadGitIgnoreFile()
+    {
+        excludedWatchPath.Clear();
+        
+        string filePath = Path.Combine(RepositoryPath, ".gitignore");
+
+        if (!File.Exists(filePath))
+            return;
+
+        // 파일의 모든 줄을 읽어온다.
+        string[] lines = File.ReadAllLines(filePath);
+
+        // 주석 또는 빈 줄을 제외하고 유효한 경로를 리스트에 추가한다.
+        foreach (string line in lines.Where(l => !string.IsNullOrWhiteSpace(l) && !l.Trim().StartsWith("#")))
+        {
+            string sanitizedPath = line.Trim().Replace("/", "\\");
+            excludedWatchPath.Add(sanitizedPath);
+        }
     }
 
     /** <summary>사용자에게 알림 메시지를 표출한다.</summary> */

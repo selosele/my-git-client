@@ -95,7 +95,8 @@
 
                     <TextBlock Margin="0 50 0 5" FontWeight="Bold" FontSize="16">스테이지에 올라가지 않은 파일</TextBlock>
                     <ListBox
-                        ItemsSource="{Binding Unstaged}">
+                        ItemsSource="{Binding Unstaged}"
+                        MaxHeight="150">
 
                         <ListBox.ItemTemplate>
                             <DataTemplate>
