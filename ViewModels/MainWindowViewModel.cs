@@ -15,7 +15,7 @@ public class MainWindowViewModel : ViewModelBase
 {
     public MainWindowViewModel()
     {
-        //UpdateRepoInfo(@"C:\Users\dmitr\Desktop\p\repo\selosele-pub");
+        UpdateRepoInfo(@"D:\workspace\MyGitClient");
         LeftMenuItems = ["파일 상태", "History"];
     }
 
@@ -66,6 +66,14 @@ public class MainWindowViewModel : ViewModelBase
     {
         get => _commitsDataGridVisible;
         set => this.RaiseAndSetIfChanged(ref _commitsDataGridVisible, value);
+    }
+
+    /** <summary>스테이지에 올라간 파일 목록</summary> */
+    private ObservableCollection<string>? _staged;
+    public ObservableCollection<string>? Staged
+    {
+        get => _staged;
+        set => this.RaiseAndSetIfChanged(ref _staged, value);
     }
 
     /** <summary>스테이지에 올라가지 않은 파일 목록</summary> */
@@ -236,6 +244,7 @@ public class MainWindowViewModel : ViewModelBase
                 return;
             }
 
+            // Git 저장소 정보 출력
             UpdateRepoInfo(RepositoryPath);
         }
         catch (Exception ex)
