@@ -272,7 +272,7 @@ public class MainWindowViewModel : ViewModelBase
     /** <summary>Git 로컬 저장소 파일의 변경을 실시간으로 감지한다.</summary> */
     private void FireWatchFileChanges()
     {
-        // .gitignore 파일을 읽어서 경로들을 파일 변경 감지 제외 디렉터리 리스트에 담는다.
+        // .gitignore 파일 읽기
         ReadGitIgnoreFile();
 
         // 파일 변경을 실시간으로 감지
@@ -301,8 +301,6 @@ public class MainWindowViewModel : ViewModelBase
         if (IsExcludedPath(e.FullPath))
             return;
             
-        Console.WriteLine($"Detect the change: {e.FullPath} - {e.ChangeType}");
-
         // Git 저장소 정보 출력
         UpdateRepoInfo(RepositoryPath);
     }
@@ -312,8 +310,6 @@ public class MainWindowViewModel : ViewModelBase
     {
         if (IsExcludedPath(e.FullPath))
             return;
-
-        Console.WriteLine("File: {0} renamed to {1}", e.OldFullPath, e.FullPath);
 
         // Git 저장소 정보 출력
         UpdateRepoInfo(RepositoryPath);
@@ -337,7 +333,7 @@ public class MainWindowViewModel : ViewModelBase
         
         string filePath = Path.Combine(RepositoryPath, ".gitignore");
 
-        // .gitignore 파일이 없으면 .git 폴더만 제외시킨다.
+        // .gitignore 파일이 없으면 .git 폴더만 제외한다.
         if (!File.Exists(filePath))
         {
             excludedWatchPath.Add(@"\.git");
