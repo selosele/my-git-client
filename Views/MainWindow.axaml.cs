@@ -41,7 +41,7 @@ public partial class MainWindow : Window
     /** <summary>버튼을 클릭, 애플리케이션을 종료한다.</summary> */
     private async void ExitMenuItem_Clicked(object sender, RoutedEventArgs e)
     {
-        var confirm = await MainWindowViewModel.ConfirmBox("Are you sure want to quit the application?");
+        var confirm = await MainWindowViewModel.ConfirmBox("프로그램을 종료하시겠습니까?");
         if (confirm.ToString() == "Yes")
         {
             Close();
@@ -56,7 +56,7 @@ public partial class MainWindow : Window
             var selectedItem = (string?)e.AddedItems[0];
             switch (selectedItem)
             {
-                case "Status":
+                case "파일 상태":
                     if (_statusStackPanel != null && _historyStackPanel != null)
                     {
                         _statusStackPanel.IsVisible = true;

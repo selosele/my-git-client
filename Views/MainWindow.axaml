@@ -17,17 +17,17 @@
 
     <DockPanel LastChildFill="True">
         <Menu DockPanel.Dock="Top" Background="#0844a4">
-            <MenuItem Header="_File" Foreground="#fff">
-                <MenuItem Header="_Open..." Command="{Binding UpdateRepoInfo}" />
+            <MenuItem Header="_파일" Foreground="#fff">
+                <MenuItem Header="_열기..." Command="{Binding SelectRepoInfo}" />
                 <Separator/>
                 <MenuItem Header="_Exit" Click="ExitMenuItem_Clicked" />
             </MenuItem>
-            <MenuItem Header="_Edit" Foreground="#fff">
-                <MenuItem Header="Copy" />
-                <MenuItem Header="Paste" />
+            <MenuItem Header="_편집" Foreground="#fff">
+                <MenuItem Header="복사" />
+                <MenuItem Header="붙여넣기" />
             </MenuItem>
-            <MenuItem Header="_Help" Foreground="#fff">
-                <MenuItem Header="About the MyGitClient" />
+            <MenuItem Header="_도움말" Foreground="#fff">
+                <MenuItem Header="MyGitClient에 대해서" />
             </MenuItem>
         </Menu>
 
@@ -36,7 +36,7 @@
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Center"
                 Content="{Binding RepositoryPath}"
-                Command="{Binding UpdateRepoInfo}"
+                Command="{Binding SelectRepoInfo}"
             />
         </Border>
         <Border Background="#fff" DockPanel.Dock="Top" IsVisible="{Binding ActionButtonsBorderVisible}">
@@ -53,9 +53,9 @@
                     </Style>
                 </StackPanel.Styles>
                 
-                <Button Content="Commit" Margin="5" Width="100" HorizontalContentAlignment="Center" />
-                <Button Content="Pull" Margin="5" Width="100" HorizontalContentAlignment="Center" />
-                <Button Content="Push" Margin="5" Width="100" HorizontalContentAlignment="Center" />
+                <Button Content="Commit" Margin="5" Width="100" HorizontalContentAlignment="Center" Command="{Binding Commit}" />
+                <Button Content="Pull" Margin="5" Width="100" HorizontalContentAlignment="Center" Command="{Binding Pull}" />
+                <Button Content="Push" Margin="5" Width="100" HorizontalContentAlignment="Center" Command="{Binding Push}" />
             </StackPanel>
         </Border>
         <!-- <Border Height="25" Background="#fff" BorderBrush="#ccc" BorderThickness="1" DockPanel.Dock="Bottom">
@@ -80,7 +80,9 @@
                     Margin="0,10,0,10"
                     IsVisible="False">
                     
-                    <TextBlock Foreground="Black">status area</TextBlock>
+                    <ListBox
+                        ItemsSource="{Binding Changes}"
+                    />
                 </StackPanel>
                 
                 <StackPanel
