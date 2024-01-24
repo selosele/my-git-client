@@ -7,7 +7,7 @@ namespace MyGitClient.Views;
 
 public partial class MainWindow : Window
 {
-    #region Properties
+    #region Fields
     /** <summary>메인 윈도우 인스턴스</summary> */
     public static MainWindow? Instance;
 

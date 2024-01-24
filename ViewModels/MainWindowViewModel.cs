@@ -19,7 +19,7 @@ public class MainWindowViewModel : ViewModelBase
         LeftMenuItems = ["Status", "History"];
     }
 
-    #region Properties
+    #region Fields
     /** <summary>최신 Repository 텍스트</summary> */
     private string _repositoryPath = "Load Git repository...";
     public string RepositoryPath
