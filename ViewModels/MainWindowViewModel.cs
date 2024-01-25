@@ -22,10 +22,10 @@ public class MainWindowViewModel : ViewModelBase
 
     #region Fields
     /** <summary>FileSystemWatcher 인스턴스</summary> */
-    private readonly FileSystemWatcher watcher = new();
+    private readonly FileSystemWatcher _watcher = new();
 
     /** <summary>FileSystemWatcher의 파일 변경 감지에 제외할 디렉터리들</summary> */
-    private readonly List<string> excludedWatchPath = [];
+    private readonly List<string> _excludedWatchPath = [];
 
     /** <summary>최신 Repository 텍스트</summary> */
     private string _repositoryPath = "Git 저장소 불러오기...";
@@ -283,16 +283,16 @@ public class MainWindowViewModel : ViewModelBase
     private void WatchFileChanges(string repositoryPath)
     {
         // FileSystemWatcher 생성
-        watcher.Path = repositoryPath;
-        watcher.EnableRaisingEvents = true;
-        watcher.IncludeSubdirectories = true;
-        watcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName;
+        _watcher.Path = repositoryPath;
+        _watcher.EnableRaisingEvents = true;
+        _watcher.IncludeSubdirectories = true;
+        _watcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName;
 
         // 파일 변경 이벤트 핸들러 등록
-        watcher.Changed += OnFileChanged;
-        watcher.Created += OnFileChanged;
-        watcher.Deleted += OnFileChanged;
-        watcher.Renamed += OnFileRenamed;
+        _watcher.Changed += OnFileChanged;
+        _watcher.Created += OnFileChanged;
+        _watcher.Deleted += OnFileChanged;
+        _watcher.Renamed += OnFileRenamed;
     }
 
     /** <summary>파일의 변경을 감지한다.</summary> */
@@ -318,7 +318,7 @@ public class MainWindowViewModel : ViewModelBase
     /** <summary>파일 변경 감지 시, 감지에 제외한 디렉터리 발견 여부를 반환한다.</summary> */
     private bool IsExcludedPath(string fullPath)
     {
-        foreach (var path in excludedWatchPath)
+        foreach (var path in _excludedWatchPath)
         {
             if (fullPath.Contains(path))
                 return true;
@@ -329,14 +329,14 @@ public class MainWindowViewModel : ViewModelBase
     /** <summary>.gitignore 파일을 읽어 배열에 담는다.</summary> */
     private void ReadGitIgnoreFile()
     {
-        excludedWatchPath.Clear();
+        _excludedWatchPath.Clear();
         
         string filePath = Path.Combine(RepositoryPath, ".gitignore");
 
         // .gitignore 파일이 없으면 .git 폴더만 제외한다.
         if (!File.Exists(filePath))
         {
-            excludedWatchPath.Add(@"\.git");
+            _excludedWatchPath.Add(@"\.git");
             return;
         }
             
@@ -347,7 +347,7 @@ public class MainWindowViewModel : ViewModelBase
         foreach (string line in lines.Where(l => !string.IsNullOrWhiteSpace(l) && !l.Trim().StartsWith("#")))
         {
             string sanitizedPath = line.Trim().Replace("/", "\\");
-            excludedWatchPath.Add(sanitizedPath);
+            _excludedWatchPath.Add(sanitizedPath);
         }
     }
 
