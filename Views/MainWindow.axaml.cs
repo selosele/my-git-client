@@ -41,7 +41,7 @@ public partial class MainWindow : Window
     /** <summary>버튼을 클릭, 애플리케이션을 종료한다.</summary> */
     private async void ExitMenuItem_Clicked(object sender, RoutedEventArgs e)
     {
-        var confirm = await MainWindowViewModel.ConfirmBox("프로그램을 종료하시겠습니까?");
+        var confirm = await DialogManager.Confirm("프로그램을 종료하시겠습니까?");
         if (confirm.ToString() == "Yes")
         {
             Close();

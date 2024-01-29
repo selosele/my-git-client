@@ -5,10 +5,9 @@ using System.IO;
 using System.Threading.Tasks;
 using LibGit2Sharp;
 using Avalonia.Controls;
-using MsBox.Avalonia;
-using MsBox.Avalonia.Enums;
 using ReactiveUI;
 using System.Linq;
+using System.Reactive;
 
 namespace MyGitClient.ViewModels;
 
@@ -18,9 +17,13 @@ public class MainWindowViewModel : ViewModelBase
     {
         //UpdateRepoInfo(@"D:\workspace\MyGitClient");
         LeftMenuItems = ["파일 상태", "History"];
+        
+        StageFileCommand = ReactiveCommand.Create<string>(StageFile);
     }
 
     #region Fields
+    public ReactiveCommand<string, Unit> StageFileCommand { get; } 
+
     /** <summary>FileSystemWatcher 인스턴스</summary> */
     private readonly FileSystemWatcher _watcher = new();
 
@@ -122,7 +125,7 @@ public class MainWindowViewModel : ViewModelBase
                 if (string.IsNullOrWhiteSpace(selectedFolderPath) || !Directory.Exists(selectedFolderPath))
                 {
                     // 경로가 유효하지 않을 경우 사용자에게 메시지를 표출한다.
-                    await AlertBox("유효하지 않은 저장소 경로입니다.");
+                    await DialogManager.Alert("유효하지 않은 저장소 경로입니다.");
                     return;
                 }
 
@@ -134,7 +137,7 @@ public class MainWindowViewModel : ViewModelBase
             }
             catch (Exception ex)
             {
-                await AlertBox(ex.Message);
+                await DialogManager.Alert(ex.Message);
             }
         }
     }
@@ -200,10 +203,25 @@ public class MainWindowViewModel : ViewModelBase
         Unstaged = new ObservableCollection<string>(unstagedList);
     }
 
+    /** <summary>스테이지에 파일을 올린다.</summary> */
+    private void StageFile(string filePath)
+    {
+        // 저장소 열기
+        using var repo = new Repository(RepositoryPath);
+
+        // git add 수행
+        Commands.Stage(repo, filePath);
+
+        // Unstaged 목록에서 제거
+        Unstaged.Remove(filePath);
+
+        Console.WriteLine($"Staged: {filePath}");
+    }
+
     /** <summary>commit을 수행한다.</summary> */
     public async Task Commit()
     {
-        await AlertBox("준비 중입니다.");
+        await DialogManager.Alert("준비 중입니다.");
     }
 
     /** <summary>pull을 수행한다.</summary> */
@@ -250,7 +268,7 @@ public class MainWindowViewModel : ViewModelBase
             // 원격 저장소의 변경 사항이 없을 경우 사용자에게 메시지를 표출한다.
             if (mergeResult.Status.ToString() == "UpToDate") // 변경 사항 존재 시 "FastForward"
             {
-                await AlertBox("원격 저장소의 변경 사항이 없습니다.");
+                await DialogManager.Alert("원격 저장소의 변경 사항이 없습니다.");
                 return;
             }
 
@@ -259,14 +277,14 @@ public class MainWindowViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            await AlertBox(ex.Message);
+            await DialogManager.Alert(ex.Message);
         }
     }
 
     /** <summary>push를 수행한다.</summary> */
     public async Task Push()
     {
-        await AlertBox("준비 중입니다.");
+        await DialogManager.Alert("준비 중입니다.");
     }
 
     /** <summary>Git 로컬 저장소 파일의 변경을 실시간으로 감지한다.</summary> */
@@ -349,20 +367,6 @@ public class MainWindowViewModel : ViewModelBase
             string sanitizedPath = line.Trim().Replace("/", "\\");
             _excludedWatchPath.Add(sanitizedPath);
         }
-    }
-
-    /** <summary>사용자에게 알림 메시지를 표출한다.</summary> */
-    public static async Task<ButtonResult> AlertBox(string message, string title = "Alert")
-    {
-        var box = MessageBoxManager.GetMessageBoxStandard(title, message);
-        return await box.ShowAsync();
-    }
-
-    /** <summary>사용자에게 확인 메시지를 표출한다.</summary> */
-    public static async Task<ButtonResult> ConfirmBox(string message, string title = "Confirm")
-    {
-        var box = MessageBoxManager.GetMessageBoxStandard(title, message, ButtonEnum.YesNoCancel);
-        return await box.ShowAsync();
     }
 }
 
