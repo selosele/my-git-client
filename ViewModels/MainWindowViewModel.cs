@@ -8,6 +8,7 @@ using Avalonia.Controls;
 using ReactiveUI;
 using System.Linq;
 using System.Reactive;
+using MyGitClient.Models;
 
 namespace MyGitClient.ViewModels;
 
@@ -19,10 +20,14 @@ public class MainWindowViewModel : ViewModelBase
         LeftMenuItems = ["파일 상태", "History"];
         
         StageFileCommand = ReactiveCommand.Create<string>(StageFile);
+        UnstageFileCommand = ReactiveCommand.Create<string>(UnstageFile);
     }
 
     #region Fields
-    public ReactiveCommand<string, Unit> StageFileCommand { get; } 
+    /** <summary>스테이지에 파일을 올리는 Command 인스턴스</summary> */
+    public ReactiveCommand<string, Unit> StageFileCommand { get; }
+    /** <summary>스테이지에서 파일을 제거하는 Command 인스턴스</summary> */
+    public ReactiveCommand<string, Unit> UnstageFileCommand { get; }
 
     /** <summary>FileSystemWatcher 인스턴스</summary> */
     private readonly FileSystemWatcher _watcher = new();
@@ -185,6 +190,7 @@ public class MainWindowViewModel : ViewModelBase
     /** <summary>변경된 파일 목록을 가져와 화면에 표시한다.</summary> */
     public void UpdateStatusInfo(RepositoryStatus status)
     {
+        var stagedList = new List<string>();
         var unstagedList = new List<string>();
 
         // 수정된 파일
@@ -198,7 +204,13 @@ public class MainWindowViewModel : ViewModelBase
 
         // 추적되지 않은 파일
         foreach (var entry in status.Untracked) unstagedList.Add(entry.FilePath);
+
+        // 스테이지에 올라간 파일
+        foreach (var entry in status.Staged) stagedList.Add(entry.FilePath);
             
+        // 스테이지에 올라간 파일 목록
+        Staged = new ObservableCollection<string>(stagedList);
+
         // 스테이지에 올라가지 않은 파일 목록
         Unstaged = new ObservableCollection<string>(unstagedList);
     }
@@ -212,16 +224,38 @@ public class MainWindowViewModel : ViewModelBase
         // git add 수행
         Commands.Stage(repo, filePath);
 
-        // Unstaged 목록에서 제거
-        Unstaged.Remove(filePath);
+        Unstaged?.Remove(filePath);
+        Staged?.Add(filePath);
 
-        Console.WriteLine($"Staged: {filePath}");
+        // 변경된 파일 목록 출력
+        //UpdateStatusInfo(repo.RetrieveStatus());
+    }
+
+    /** <summary>스테이지에서 파일을 제거한다.</summary> */
+    private void UnstageFile(string filePath)
+    {
+        // 저장소 열기
+        using var repo = new Repository(RepositoryPath);
+
+        // git reset HEAD [파일경로] 수행
+        Commands.Unstage(repo, filePath);
+
+        Staged?.Remove(filePath);
+        Unstaged?.Add(filePath);
+
+        // 변경된 파일 목록 출력
+        //UpdateStatusInfo(repo.RetrieveStatus());
     }
 
     /** <summary>commit을 수행한다.</summary> */
     public async Task Commit()
     {
-        await DialogManager.Alert("준비 중입니다.");
+        // 스테이지에 올라간 파일이 없으면 커밋을 수행하지 않는다.
+        if (Staged?.Count == 0)
+        {
+            await DialogManager.Alert("커밋할 파일이 존재하지 않습니다.");
+            return;
+        }
     }
 
     /** <summary>pull을 수행한다.</summary> */
@@ -285,6 +319,13 @@ public class MainWindowViewModel : ViewModelBase
     public async Task Push()
     {
         await DialogManager.Alert("준비 중입니다.");
+    }
+
+    /** <summary>Git 저장소 정보를 새로고침하여 출력한다.</summary> */
+    public void Refresh()
+    {
+        // Git 저장소 정보 출력
+        UpdateRepoInfo(RepositoryPath);
     }
 
     /** <summary>Git 로컬 저장소 파일의 변경을 실시간으로 감지한다.</summary> */
@@ -368,14 +409,4 @@ public class MainWindowViewModel : ViewModelBase
             _excludedWatchPath.Add(sanitizedPath);
         }
     }
-}
-
-/** <summary>커밋 정보</summary> */
-public class CommitInfo(string sha, string authorName, string authorEmail, string authorWhen, string message)
-{
-    public string Sha { get; set; } = sha;
-    public string AuthorName { get; set; } = authorName;
-    public string AuthorEmail { get; set; } = authorEmail;
-    public string AuthorWhen { get; set; } = authorWhen;
-    public string Message { get; set; } = message;
 }

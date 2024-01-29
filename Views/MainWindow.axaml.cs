@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using MsBox.Avalonia.Enums;
 using MyGitClient.ViewModels;
 
 namespace MyGitClient.Views;
@@ -42,7 +43,7 @@ public partial class MainWindow : Window
     private async void ExitMenuItem_Clicked(object sender, RoutedEventArgs e)
     {
         var confirm = await DialogManager.Confirm("프로그램을 종료하시겠습니까?");
-        if (confirm.ToString() == "Yes")
+        if (confirm == ButtonResult.Yes)
         {
             Close();
         }

@@ -66,6 +66,7 @@
                 <Button Content="Commit" Margin="5" Width="100" HorizontalContentAlignment="Center" Command="{Binding Commit}" />
                 <Button Content="Pull" Margin="5" Width="100" HorizontalContentAlignment="Center" Command="{Binding Pull}" />
                 <Button Content="Push" Margin="5" Width="100" HorizontalContentAlignment="Center" Command="{Binding Push}" />
+                <Button Content="새로고침" Margin="5" Width="100" HorizontalContentAlignment="Center" Command="{Binding Refresh}" />
             </StackPanel>
         </Border>
         <!-- <Border Height="25" Background="#fff" BorderBrush="#ccc" BorderThickness="1" DockPanel.Dock="Bottom">
@@ -91,7 +92,38 @@
                     IsVisible="False">
 
                     <TextBlock Margin="0 5" FontWeight="Bold" FontSize="16">스테이지에 올라간 파일</TextBlock>
-                    <ListBox />
+                    <ListBox
+                        ItemsSource="{Binding Staged}"
+                        MaxHeight="150">
+
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <DockPanel>
+                                    <DockPanel.Styles>
+                                        <Style Selector="Button:pointerover /template/ ContentPresenter">
+                                            <Setter Property="Background" Value="#e2f0ff" />
+                                            <Setter Property="BorderBrush" Value="#0844a4" />
+                                        </Style>
+                                    </DockPanel.Styles>
+
+                                    <TextBlock Text="{Binding}" />
+                                    <Button
+                                        Width="18" Height="18"
+                                        Margin="0" Padding="0"
+                                        DockPanel.Dock="Right"
+                                        HorizontalAlignment="Right"
+                                        HorizontalContentAlignment="Center"
+                                        VerticalContentAlignment="Center"
+                                        ToolTip.Tip="스테이지에서 제거하기"
+                                        Command="{Binding $parent[ListBox].((vm:MainWindowViewModel)DataContext).UnstageFileCommand}"
+                                        CommandParameter="{Binding}">
+                                    
+                                        <TextBlock Text="-" Height="18" FontSize="24" VerticalAlignment="Center" />
+                                    </Button>
+                                </DockPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
 
                     <TextBlock Margin="0 50 0 5" FontWeight="Bold" FontSize="16">스테이지에 올라가지 않은 파일</TextBlock>
                     <ListBox
@@ -116,7 +148,9 @@
                                         HorizontalAlignment="Right"
                                         HorizontalContentAlignment="Center"
                                         VerticalContentAlignment="Center"
-                                        ToolTip.Tip="스테이지에 올리기">
+                                        ToolTip.Tip="스테이지에 올리기"
+                                        Command="{Binding $parent[ListBox].((vm:MainWindowViewModel)DataContext).StageFileCommand}"
+                                        CommandParameter="{Binding}">
                                     
                                         <TextBlock Text="+" Height="18" FontSize="24" VerticalAlignment="Center" />
                                     </Button>
