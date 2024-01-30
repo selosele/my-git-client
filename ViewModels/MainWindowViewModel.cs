@@ -122,7 +122,7 @@ public class MainWindowViewModel : ViewModelBase
             Directory = Directory.GetCurrentDirectory() // 기본 경로 설정
         };
 
-        var selectedFolderPath = await folderDialog.ShowAsync(Views.MainWindow.Instance);
+        var selectedFolderPath = await folderDialog.ShowAsync(Views.MainWindow.Instance!);
 
         if (!string.IsNullOrEmpty(selectedFolderPath))
         {
