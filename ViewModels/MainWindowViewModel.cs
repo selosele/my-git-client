@@ -24,18 +24,19 @@ public class MainWindowViewModel : ViewModelBase
     }
 
     #region Fields
-    /** <summary>스테이지에 파일을 올리는 Command 인스턴스</summary> */
+    // <summary>스테이지에 파일을 올리는 Command 인스턴스</summary>
     public ReactiveCommand<string, Unit> StageFileCommand { get; }
-    /** <summary>스테이지에서 파일을 제거하는 Command 인스턴스</summary> */
+
+    // <summary>스테이지에서 파일을 제거하는 Command 인스턴스</summary>
     public ReactiveCommand<string, Unit> UnstageFileCommand { get; }
 
-    /** <summary>FileSystemWatcher 인스턴스</summary> */
+    // <summary>FileSystemWatcher 인스턴스</summary>
     private readonly FileSystemWatcher _watcher = new();
 
-    /** <summary>FileSystemWatcher의 파일 변경 감지에 제외할 디렉터리들</summary> */
+    // <summary>FileSystemWatcher의 파일 변경 감지에 제외할 디렉터리들</summary>
     private readonly List<string> _excludedWatchPath = [];
 
-    /** <summary>최신 Repository 텍스트</summary> */
+    // <summary>최신 Repository 텍스트</summary>
     private string _repositoryPath = "Git 저장소 불러오기...";
     public string RepositoryPath
     {
@@ -43,7 +44,7 @@ public class MainWindowViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _repositoryPath, value);
     }
 
-    /** <summary>최신 브랜치 텍스트</summary> */
+    // <summary>최신 브랜치 텍스트</summary>
     private string? _currentBranchText;
     public string? CurrentBranchText
     {
@@ -51,7 +52,7 @@ public class MainWindowViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _currentBranchText, value);
     }
 
-    /** <summary>최신 커밋 텍스트</summary> */
+    // <summary>최신 커밋 텍스트</summary>
     private string? _latestCommitText;
     public string? LatestCommitText
     {
@@ -59,7 +60,7 @@ public class MainWindowViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _latestCommitText, value);
     }
 
-    /** <summary>최신 커밋 일시 텍스트</summary> */
+    // <summary>최신 커밋 일시 텍스트</summary>
     private string? _latestCommitDateText;
     public string? LatestCommitDateText
     {
@@ -67,7 +68,7 @@ public class MainWindowViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _latestCommitDateText, value);
     }
 
-    /** <summary>액션버튼 Border 표시 여부</summary> */
+    // <summary>액션버튼 Border 표시 여부</summary>
     private bool? _actionButtonsBorderVisible = false;
     public bool? ActionButtonsBorderVisible
     {
@@ -75,7 +76,7 @@ public class MainWindowViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _actionButtonsBorderVisible, value);
     }
 
-    /** <summary>커밋 정보 데이타그리드 표시 여부</summary> */
+    // <summary>커밋 정보 데이타그리드 표시 여부</summary>
     private bool? _commitsDataGridVisible = false;
     public bool? CommitsDataGridVisible
     {
@@ -83,7 +84,7 @@ public class MainWindowViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _commitsDataGridVisible, value);
     }
 
-    /** <summary>스테이지에 올라간 파일 목록</summary> */
+    // <summary>스테이지에 올라간 파일 목록</summary>
     private ObservableCollection<string>? _staged;
     public ObservableCollection<string>? Staged
     {
@@ -91,7 +92,7 @@ public class MainWindowViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _staged, value);
     }
 
-    /** <summary>스테이지에 올라가지 않은 파일 목록</summary> */
+    // <summary>스테이지에 올라가지 않은 파일 목록</summary>
     private ObservableCollection<string>? _unstaged;
     public ObservableCollection<string>? Unstaged
     {
@@ -99,7 +100,7 @@ public class MainWindowViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _unstaged, value);
     }
 
-    /** <summary>커밋 정보 목록</summary> */
+    // <summary>커밋 정보 목록</summary>
     private ObservableCollection<CommitInfo>? _commits;
     public ObservableCollection<CommitInfo>? Commits
     {
@@ -107,11 +108,11 @@ public class MainWindowViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _commits, value);
     }
 
-    /** <summary>레프트 메뉴 아이템</summary> */
+    // <summary>레프트 메뉴 아이템</summary>
     public ObservableCollection<string>? LeftMenuItems { get; set; }
     #endregion
 
-    /** <summary>Git 저장소 경로를 선택한다.</summary> */
+    // <summary>Git 저장소 경로를 선택한다.</summary>
     [Obsolete]
     public async Task SelectRepoInfo()
     {
@@ -147,7 +148,7 @@ public class MainWindowViewModel : ViewModelBase
         }
     }
 
-    /** <summary>Git 저장소 정보를 가져와 화면에 표시한다.</summary> */
+    // <summary>Git 저장소 정보를 가져와 화면에 표시한다.</summary>
     public void UpdateRepoInfo(string repositoryPath)
     {
         using var repo = new Repository(repositoryPath);
@@ -168,7 +169,7 @@ public class MainWindowViewModel : ViewModelBase
         UpdateCommitsInfo(repo.Commits);
     }
 
-    /** <summary>커밋 정보 목록을 가져와 화면에 표시한다.</summary> */
+    // <summary>커밋 정보 목록을 가져와 화면에 표시한다.</summary>
     public void UpdateCommitsInfo(IQueryableCommitLog commits)
     {
         var commitList = new List<CommitInfo>();
@@ -187,7 +188,7 @@ public class MainWindowViewModel : ViewModelBase
         Commits = new ObservableCollection<CommitInfo>(commitList);
     }
 
-    /** <summary>변경된 파일 목록을 가져와 화면에 표시한다.</summary> */
+    // <summary>변경된 파일 목록을 가져와 화면에 표시한다.</summary>
     public void UpdateStatusInfo(RepositoryStatus status)
     {
         var stagedList = new List<string>();
@@ -215,7 +216,7 @@ public class MainWindowViewModel : ViewModelBase
         Unstaged = new ObservableCollection<string>(unstagedList);
     }
 
-    /** <summary>스테이지에 파일을 올린다.</summary> */
+    // <summary>스테이지에 파일을 올린다.</summary>
     private void StageFile(string filePath)
     {
         // 저장소 열기
@@ -231,7 +232,7 @@ public class MainWindowViewModel : ViewModelBase
         //UpdateStatusInfo(repo.RetrieveStatus());
     }
 
-    /** <summary>스테이지에서 파일을 제거한다.</summary> */
+    // <summary>스테이지에서 파일을 제거한다.</summary>
     private void UnstageFile(string filePath)
     {
         // 저장소 열기
@@ -247,7 +248,7 @@ public class MainWindowViewModel : ViewModelBase
         //UpdateStatusInfo(repo.RetrieveStatus());
     }
 
-    /** <summary>commit을 수행한다.</summary> */
+    // <summary>commit을 수행한다.</summary>
     public async Task Commit()
     {
         // 스테이지에 올라간 파일이 없으면 커밋을 수행하지 않는다.
@@ -258,7 +259,7 @@ public class MainWindowViewModel : ViewModelBase
         }
     }
 
-    /** <summary>pull을 수행한다.</summary> */
+    // <summary>pull을 수행한다.</summary>
     public async Task Pull()
     {
         try
@@ -300,7 +301,9 @@ public class MainWindowViewModel : ViewModelBase
                 });
 
             // 원격 저장소의 변경 사항이 없을 경우 사용자에게 메시지를 표출한다.
-            if (mergeResult.Status.ToString() == "UpToDate") // 변경 사항 존재 시 "FastForward"
+            // 변경 사항 없을 시 "UpToDate"
+            // 변경 사항 존재 시 "FastForward"
+            if (mergeResult.Status.ToString() == Models.MergeStatus.UpToDate.ToString())
             {
                 await DialogManager.Alert("원격 저장소의 변경 사항이 없습니다.");
                 return;
@@ -315,20 +318,20 @@ public class MainWindowViewModel : ViewModelBase
         }
     }
 
-    /** <summary>push를 수행한다.</summary> */
+    // <summary>push를 수행한다.</summary>
     public async Task Push()
     {
         await DialogManager.Alert("준비 중입니다.");
     }
 
-    /** <summary>Git 저장소 정보를 새로고침하여 출력한다.</summary> */
+    // <summary>Git 저장소 정보를 새로고침하여 출력한다.</summary>
     public void Refresh()
     {
         // Git 저장소 정보 출력
         UpdateRepoInfo(RepositoryPath);
     }
 
-    /** <summary>Git 로컬 저장소 파일의 변경을 실시간으로 감지한다.</summary> */
+    // <summary>Git 로컬 저장소 파일의 변경을 실시간으로 감지한다.</summary>
     private void FireWatchFileChanges()
     {
         // .gitignore 파일 읽기
@@ -338,7 +341,7 @@ public class MainWindowViewModel : ViewModelBase
         WatchFileChanges(RepositoryPath);
     }
 
-    /** <summary>파일의 변경을 실시간으로 감지한다.</summary> */
+    // <summary>파일의 변경을 실시간으로 감지한다.</summary>
     private void WatchFileChanges(string repositoryPath)
     {
         // FileSystemWatcher 생성
@@ -354,7 +357,7 @@ public class MainWindowViewModel : ViewModelBase
         _watcher.Renamed += OnFileRenamed;
     }
 
-    /** <summary>파일의 변경을 감지한다.</summary> */
+    // <summary>파일의 변경을 감지한다.</summary>
     private void OnFileChanged(object sender, FileSystemEventArgs e)
     {
         if (IsExcludedPath(e.FullPath))
@@ -364,7 +367,7 @@ public class MainWindowViewModel : ViewModelBase
         UpdateRepoInfo(RepositoryPath);
     }
 
-    /** <summary>파일명의 변경을 감지한다.</summary> */
+    // <summary>파일명의 변경을 감지한다.</summary>
     private void OnFileRenamed(object source, RenamedEventArgs e)
     {
         if (IsExcludedPath(e.FullPath))
@@ -374,7 +377,7 @@ public class MainWindowViewModel : ViewModelBase
         UpdateRepoInfo(RepositoryPath);
     }
 
-    /** <summary>파일 변경 감지 시, 감지에 제외한 디렉터리 발견 여부를 반환한다.</summary> */
+    // <summary>파일 변경 감지 시, 감지에 제외한 디렉터리 발견 여부를 반환한다.</summary>
     private bool IsExcludedPath(string fullPath)
     {
         foreach (var path in _excludedWatchPath)
@@ -385,7 +388,7 @@ public class MainWindowViewModel : ViewModelBase
         return false;
     }
 
-    /** <summary>.gitignore 파일을 읽어 배열에 담는다.</summary> */
+    // <summary>.gitignore 파일을 읽어 배열에 담는다.</summary>
     private void ReadGitIgnoreFile()
     {
         _excludedWatchPath.Clear();

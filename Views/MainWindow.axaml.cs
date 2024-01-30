@@ -9,16 +9,16 @@ namespace MyGitClient.Views;
 public partial class MainWindow : Window
 {
     #region Fields
-    /** <summary>메인 윈도우 인스턴스</summary> */
+    // <summary>메인 윈도우 인스턴스</summary>
     public static MainWindow? Instance;
 
-    /** <summary>뷰모델 인스턴스</summary> */
+    // <summary>뷰모델 인스턴스</summary>
     private readonly MainWindowViewModel _viewModel;
     
-    /** <summary>Status 영역 StackPanel</summary> */
+    // <summary>Status 영역 StackPanel</summary>
     private StackPanel? _statusStackPanel;
     
-    /** <summary>History 영역 StackPanel</summary> */
+    // <summary>History 영역 StackPanel</summary>
     private StackPanel? _historyStackPanel;
     #endregion
 
@@ -39,8 +39,8 @@ public partial class MainWindow : Window
         _historyStackPanel = this.Find<StackPanel>("HistoryStackPanel");
     }
 
-    /** <summary>버튼을 클릭, 애플리케이션을 종료한다.</summary> */
-    private async void ExitMenuItem_Clicked(object sender, RoutedEventArgs e)
+    // <summary>버튼을 클릭, 애플리케이션을 종료한다.</summary>
+    private async void ExitMenuItem_Click(object sender, RoutedEventArgs e)
     {
         var confirm = await DialogManager.Confirm("프로그램을 종료하시겠습니까?");
         if (confirm == ButtonResult.Yes)
@@ -49,8 +49,8 @@ public partial class MainWindow : Window
         }
     }
 
-    /** <summary>레프트 메뉴 아이템을 클릭한다.</summary> */
-    private void LeftListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    // <summary>레프트 메뉴 아이템을 클릭한다.</summary>
+    private void LeftListBox_SelectionChange(object sender, SelectionChangedEventArgs e)
     {
         if (e.AddedItems.Count > 0)
         {

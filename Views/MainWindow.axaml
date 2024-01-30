@@ -30,7 +30,7 @@
             <MenuItem Header="_파일" Foreground="#fff">
                 <MenuItem Header="_열기..." Command="{Binding SelectRepoInfo}" />
                 <Separator/>
-                <MenuItem Header="_Exit" Click="ExitMenuItem_Clicked" />
+                <MenuItem Header="_Exit" Click="ExitMenuItem_Click" />
             </MenuItem>
             <MenuItem Header="_편집" Foreground="#fff">
                 <MenuItem Header="복사" />
@@ -75,7 +75,7 @@
         <Border Width="200" Background="#fff" BorderBrush="#ccc" BorderThickness="0,1,0,0" DockPanel.Dock="Left">
             <ListBox
                 ItemsSource="{Binding LeftMenuItems}"
-                SelectionChanged="LeftListBox_SelectionChanged"
+                SelectionChanged="LeftListBox_SelectionChange"
             />
         </Border>
         <Border Background="#fff" BorderBrush="#ccc" BorderThickness="1" Padding="10">
