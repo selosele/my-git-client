@@ -161,8 +161,8 @@
                         Name="CommitMessageTextBox"
                         Height="50"
                         Watermark="커밋 메시지를 입력하세요"
-                        TextWrapping="Wrap"
                         Text="{Binding CommitMessageText}"
+                        TextWrapping="Wrap"
                     />
                 </StackPanel>
                 
