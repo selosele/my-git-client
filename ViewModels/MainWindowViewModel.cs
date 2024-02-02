@@ -16,7 +16,7 @@ public class MainWindowViewModel : ViewModelBase
 {
     public MainWindowViewModel()
     {
-        //UpdateRepoInfo(@"D:\workspace\MyGitClient");
+        InitRepoInfo(@"D:\workspace\MyGitClient");
         LeftMenuItems = ["파일 상태", "History"];
         
         StageFileCommand = ReactiveCommand.Create<string>(StageFile);
@@ -111,6 +111,16 @@ public class MainWindowViewModel : ViewModelBase
     // <summary>레프트 메뉴 아이템</summary>
     public ObservableCollection<string>? LeftMenuItems { get; set; }
     #endregion
+
+    // <summary>애플리케이션 실행 직후 Git 저장소 정보를 불러온다.</summary>
+    public void InitRepoInfo(string repositoryPath)
+    {
+        // Git 저장소 정보 출력
+        UpdateRepoInfo(repositoryPath);
+
+        // Git 로컬 저장소 파일의 변경을 실시간으로 감지
+        FireWatchFileChanges();
+    }
 
     // <summary>Git 저장소 경로를 선택한다.</summary>
     [Obsolete]
@@ -257,6 +267,19 @@ public class MainWindowViewModel : ViewModelBase
             await DialogManager.Alert("커밋할 파일이 존재하지 않습니다.");
             return;
         }
+
+        using var repo = new Repository(RepositoryPath);
+        
+        // Git 사용자 정보 가져오기
+        var userName = repo.Config.Get<string>("user.name").Value;
+        var userEmail = repo.Config.Get<string>("user.email").Value;
+
+        var author = new Signature(userName, userEmail, DateTimeOffset.Now);
+
+        // git commit 수행
+        Commit commit = repo.Commit("Commit message", author, author);
+
+        Console.WriteLine($"Committed: {commit.Sha}");
     }
 
     // <summary>pull을 수행한다.</summary>
@@ -265,14 +288,14 @@ public class MainWindowViewModel : ViewModelBase
         try
         {
             // 원격 저장소 이름
-            string remoteName = "origin";
+            var remoteName = "origin";
 
             // 저장소 열기
             using var repo = new Repository(RepositoryPath);
 
             // Git 사용자 정보 가져오기
-            string userName = repo.Config.Get<string>("user.name").Value;
-            string userEmail = repo.Config.Get<string>("user.email").Value;
+            var userName = repo.Config.Get<string>("user.name").Value;
+            var userEmail = repo.Config.Get<string>("user.email").Value;
 
             // 현재 브랜치 가져오기
             Branch currentBranch = repo.Head;
@@ -283,7 +306,7 @@ public class MainWindowViewModel : ViewModelBase
             // 원격 저장소 정보 가져오기
             Remote remote = repo.Network.Remotes[remoteName];
 
-            // pull 수행
+            // git pull 수행
             var mergeResult = Commands.Pull(repo, new Signature(userName, userEmail, DateTimeOffset.Now),
                 new PullOptions
                 {
