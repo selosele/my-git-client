@@ -195,19 +195,19 @@ public class MainWindowViewModel : ViewModelBase
         var unstagedList = new List<string>();
 
         // 수정된 파일
-        foreach (var entry in status.Modified) unstagedList.Add(entry.FilePath);
+        foreach (var entry in status.Modified) { unstagedList.Add(entry.FilePath); }
 
         // 추가된 파일
-        foreach (var entry in status.Added) unstagedList.Add(entry.FilePath);
+        foreach (var entry in status.Added) { unstagedList.Add(entry.FilePath); }
 
         // 삭제된 파일
-        foreach (var entry in status.Removed) unstagedList.Add(entry.FilePath);
+        foreach (var entry in status.Removed) { unstagedList.Add(entry.FilePath); }
 
         // 추적되지 않은 파일
-        foreach (var entry in status.Untracked) unstagedList.Add(entry.FilePath);
+        foreach (var entry in status.Untracked) { unstagedList.Add(entry.FilePath); }
 
         // 스테이지에 올라간 파일
-        foreach (var entry in status.Staged) stagedList.Add(entry.FilePath);
+        foreach (var entry in status.Staged) { stagedList.Add(entry.FilePath); }
             
         // 스테이지에 올라간 파일 목록
         Staged = new ObservableCollection<string>(stagedList);
@@ -360,8 +360,7 @@ public class MainWindowViewModel : ViewModelBase
     // <summary>파일의 변경을 감지한다.</summary>
     private void OnFileChanged(object sender, FileSystemEventArgs e)
     {
-        if (IsExcludedPath(e.FullPath))
-            return;
+        if (IsExcludedPath(e.FullPath)) { return; }
             
         // Git 저장소 정보 출력
         UpdateRepoInfo(RepositoryPath);
@@ -370,8 +369,7 @@ public class MainWindowViewModel : ViewModelBase
     // <summary>파일명의 변경을 감지한다.</summary>
     private void OnFileRenamed(object source, RenamedEventArgs e)
     {
-        if (IsExcludedPath(e.FullPath))
-            return;
+        if (IsExcludedPath(e.FullPath)) { return; }
 
         // Git 저장소 정보 출력
         UpdateRepoInfo(RepositoryPath);
@@ -382,8 +380,7 @@ public class MainWindowViewModel : ViewModelBase
     {
         foreach (var path in _excludedWatchPath)
         {
-            if (fullPath.Contains(path))
-                return true;
+            if (fullPath.Contains(path)) { return true; }
         }
         return false;
     }
@@ -401,7 +398,7 @@ public class MainWindowViewModel : ViewModelBase
             _excludedWatchPath.Add(@"\.git");
             return;
         }
-            
+
         // 파일의 모든 줄을 읽어온다.
         string[] lines = File.ReadAllLines(filePath);
 
