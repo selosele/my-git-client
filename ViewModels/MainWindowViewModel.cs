@@ -9,6 +9,7 @@ using ReactiveUI;
 using System.Linq;
 using System.Reactive;
 using MyGitClient.Models;
+using Avalonia.Controls.Selection;
 
 namespace MyGitClient.ViewModels;
 
@@ -18,12 +19,21 @@ public class MainWindowViewModel : ViewModelBase
     {
         InitRepoInfo(@"D:\workspace\MyGitClient");
         LeftMenuItems = ["파일 상태", "History"];
-        
+
+        StagedSelection = new SelectionModel<string>
+        {
+            SingleSelect = false
+        };
+        StagedSelection.SelectionChanged += OnStagedSelectionChanged;
+
         StageFileCommand = ReactiveCommand.Create<string>(StageFile);
         UnstageFileCommand = ReactiveCommand.Create<string>(UnstageFile);
     }
 
     #region Fields
+    // <summary>스테이지에 올라간 파일의 Selection 인스턴스</summary>
+    public ISelectionModel StagedSelection { get; }
+
     // <summary>스테이지에 파일을 올리는 Command 인스턴스</summary>
     public ReactiveCommand<string, Unit> StageFileCommand { get; }
 
@@ -68,6 +78,14 @@ public class MainWindowViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _latestCommitDateText, value);
     }
 
+    // <summary>커밋 메시지 텍스트</summary>
+    private string? _commitMessageText;
+    public string? CommitMessageText
+    {
+        get => _commitMessageText;
+        set => this.RaiseAndSetIfChanged(ref _commitMessageText, value);
+    }
+
     // <summary>액션버튼 Border 표시 여부</summary>
     private bool? _actionButtonsBorderVisible = false;
     public bool? ActionButtonsBorderVisible
@@ -92,6 +110,14 @@ public class MainWindowViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _staged, value);
     }
 
+    // <summary>스테이지에 올라간 선택된 파일</summary>
+    private ObservableCollection<string>? _selectedStaged;
+    public ObservableCollection<string>? SelectionStaged
+    {
+        get => _selectedStaged;
+        set => this.RaiseAndSetIfChanged(ref _selectedStaged, value);
+    }
+
     // <summary>스테이지에 올라가지 않은 파일 목록</summary>
     private ObservableCollection<string>? _unstaged;
     public ObservableCollection<string>? Unstaged
@@ -106,6 +132,14 @@ public class MainWindowViewModel : ViewModelBase
     {
         get => _commits;
         set => this.RaiseAndSetIfChanged(ref _commits, value);
+    }
+
+    // <summary>Git 사용자 정보</summary>
+    private string? _authorInfoText;
+    public string? AuthorInfoText
+    {
+        get => _authorInfoText;
+        set => this.RaiseAndSetIfChanged(ref _authorInfoText, value);
     }
 
     // <summary>레프트 메뉴 아이템</summary>
@@ -165,12 +199,19 @@ public class MainWindowViewModel : ViewModelBase
         Branch currentBranch = repo.Head;
         Commit latestCommit = currentBranch.Tip;
 
+        // Git 사용자 정보 가져오기
+        var authorInfo = GetAuthorInfo(repo.Config);
+
+        AuthorInfoText = $"{authorInfo.UserName} <{authorInfo.UserEmail}>";
         RepositoryPath = repositoryPath;
         CurrentBranchText = $"최신 브랜치: {currentBranch.FriendlyName}";
         LatestCommitText = $"최신 커밋: {latestCommit.Message.Trim()}";
         LatestCommitDateText = $"최신 커밋 일자: {latestCommit.Author.When}";
         ActionButtonsBorderVisible = true;
         CommitsDataGridVisible = true;
+        
+        CommitMessageText = "";
+        SelectionStaged?.Clear();
 
         // 변경된 파일 목록 출력
         UpdateStatusInfo(repo.RetrieveStatus());
@@ -218,7 +259,7 @@ public class MainWindowViewModel : ViewModelBase
 
         // 스테이지에 올라간 파일
         foreach (var entry in status.Staged) { stagedList.Add(entry.FilePath); }
-            
+
         // 스테이지에 올라간 파일 목록
         Staged = new ObservableCollection<string>(stagedList);
 
@@ -253,6 +294,7 @@ public class MainWindowViewModel : ViewModelBase
 
         Staged?.Remove(filePath);
         Unstaged?.Add(filePath);
+        SelectionStaged?.Remove(filePath);
 
         // 변경된 파일 목록 출력
         //UpdateStatusInfo(repo.RetrieveStatus());
@@ -268,16 +310,21 @@ public class MainWindowViewModel : ViewModelBase
             return;
         }
 
-        using var repo = new Repository(RepositoryPath);
-        
-        // Git 사용자 정보 가져오기
-        var userName = repo.Config.Get<string>("user.name").Value;
-        var userEmail = repo.Config.Get<string>("user.email").Value;
+        // 입력된 커밋 메시지가 없으면 커밋을 수행하지 않는다.
+        if (string.IsNullOrWhiteSpace(CommitMessageText)) {
+            await DialogManager.Alert("커밋 메시지를 입력하세요.");
+            return;
+        }
 
-        var author = new Signature(userName, userEmail, DateTimeOffset.Now);
+        // TODO: ListBox에서 선택한 항목들만 커밋할 수 있도록 개선하기
+        using var repo = new Repository(RepositoryPath);
+
+        // Git 사용자 정보 가져오기
+        var authorInfo = GetAuthorInfo(repo.Config);
+        var author = new Signature(authorInfo.UserName, authorInfo.UserEmail, DateTimeOffset.Now);
 
         // git commit 수행
-        Commit commit = repo.Commit("Commit message", author, author);
+        Commit commit = repo.Commit(CommitMessageText, author, author);
 
         Console.WriteLine($"Committed: {commit.Sha}");
     }
@@ -293,10 +340,6 @@ public class MainWindowViewModel : ViewModelBase
             // 저장소 열기
             using var repo = new Repository(RepositoryPath);
 
-            // Git 사용자 정보 가져오기
-            var userName = repo.Config.Get<string>("user.name").Value;
-            var userEmail = repo.Config.Get<string>("user.email").Value;
-
             // 현재 브랜치 가져오기
             Branch currentBranch = repo.Head;
 
@@ -306,8 +349,11 @@ public class MainWindowViewModel : ViewModelBase
             // 원격 저장소 정보 가져오기
             Remote remote = repo.Network.Remotes[remoteName];
 
+            // Git 사용자 정보 가져오기
+            var authorInfo = GetAuthorInfo(repo.Config);
+
             // git pull 수행
-            var mergeResult = Commands.Pull(repo, new Signature(userName, userEmail, DateTimeOffset.Now),
+            var mergeResult = Commands.Pull(repo, new Signature(authorInfo.UserName, authorInfo.UserEmail, DateTimeOffset.Now),
                 new PullOptions
                 {
                     FetchOptions = new FetchOptions()
@@ -384,7 +430,7 @@ public class MainWindowViewModel : ViewModelBase
     private void OnFileChanged(object sender, FileSystemEventArgs e)
     {
         if (IsExcludedPath(e.FullPath)) { return; }
-            
+
         // Git 저장소 정보 출력
         UpdateRepoInfo(RepositoryPath);
     }
@@ -412,7 +458,7 @@ public class MainWindowViewModel : ViewModelBase
     private void ReadGitIgnoreFile()
     {
         _excludedWatchPath.Clear();
-        
+
         string filePath = Path.Combine(RepositoryPath, ".gitignore");
 
         // .gitignore 파일이 없으면 .git 폴더만 제외한다.
@@ -432,4 +478,26 @@ public class MainWindowViewModel : ViewModelBase
             _excludedWatchPath.Add(sanitizedPath);
         }
     }
+
+    // <summary>Git 사용자 정보를 반환한다.</summary>
+    private static AuthorInfo GetAuthorInfo(Configuration repoConfig)
+    {
+        // Git 사용자 정보 가져오기
+        var userName = repoConfig.Get<string>("user.name").Value;
+        var userEmail = repoConfig.Get<string>("user.email").Value;
+
+        return new AuthorInfo(userName, userEmail);
+    }
+
+    // <summary>스테이지에 올라간 파일을 선택한다.</summary>
+    private void OnStagedSelectionChanged(object? sender, SelectionModelSelectionChangedEventArgs e)
+    {
+        if (sender == null) { return; }
+
+        foreach (var item in e.SelectedItems)
+        {
+            SelectionStaged?.Add(item?.ToString()!);
+        }
+    }
+
 }
