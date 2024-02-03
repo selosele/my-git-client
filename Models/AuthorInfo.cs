@@ -1,6 +1,8 @@
 namespace MyGitClient.Models
 {
-    // <summary>Git 사용자 정보</summary>
+    /// <summary>
+    /// Git 사용자 정보
+    /// </summary>
     public class AuthorInfo(string userName, string userEmail)
     {
         public string UserName { get; set; } = userName;

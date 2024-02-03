@@ -1,6 +1,8 @@
 namespace MyGitClient.Models
 {
-    // <summary>Git 커밋 정보</summary>
+    /// <summary>
+    /// Git 커밋 정보
+    /// </summary>
     public class CommitInfo(string sha, string authorName, string authorEmail, string authorWhen, string message)
     {
         public string Sha { get; set; } = sha;

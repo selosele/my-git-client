@@ -158,7 +158,6 @@
                         Text="{Binding AuthorInfoText}"
                     />
                     <TextBox
-                        Name="CommitMessageTextBox"
                         Height="50"
                         Watermark="커밋 메시지를 입력하세요"
                         Text="{Binding CommitMessageText}"
