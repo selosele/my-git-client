@@ -1,4 +1,5 @@
 ﻿using Avalonia;
+using Avalonia.Media;
 using Avalonia.ReactiveUI;
 using System;
 
@@ -17,7 +18,17 @@ sealed class Program
     public static AppBuilder BuildAvaloniaApp()
         => AppBuilder.Configure<App>()
             .UsePlatformDetect()
-            .WithInterFont()
             .LogToTrace()
-            .UseReactiveUI();
+            .UseReactiveUI()
+            //.WithInterFont() // TODO: 외부 폰트 사용 시, 주석 처리 필요
+            .With(new FontManagerOptions{
+                DefaultFamilyName = "avares://MyGitClient/Assets/Fonts#Noto Sans KR",
+                FontFallbacks =
+                [
+                    new FontFallback
+                    {
+                        FontFamily = new FontFamily("avares://MyGitClient/Assets/Fonts#Noto Sans KR")
+                    }
+                ]
+            });
 }
