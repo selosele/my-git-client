@@ -15,9 +15,10 @@ namespace MyGitClient.ViewModels;
 
 public class MainWindowViewModel : ViewModelBase
 {
+
+    #region Constructor
     public MainWindowViewModel()
     {
-        //InitRepoInfo(@"D:\workspace\MyGitClient");
         LeftMenuItems = ["파일 상태", "History"];
 
         StagedSelection = new SelectionModel<string>
@@ -28,7 +29,11 @@ public class MainWindowViewModel : ViewModelBase
 
         StageFileCommand = ReactiveCommand.Create<string>(StageFile);
         UnstageFileCommand = ReactiveCommand.Create<string>(UnstageFile);
+
+        // TODO: InitRepoInfo 메서드는 로컬에서만 실행한다. 
+        //InitRepoInfo(@"D:\workspace\MyGitClient");
     }
+    #endregion
 
     #region Fields
     /// <summary>
@@ -182,6 +187,7 @@ public class MainWindowViewModel : ViewModelBase
     public ObservableCollection<string>? LeftMenuItems { get; set; }
     #endregion
 
+    #region Methods
     /// <summary>
     /// 애플리케이션 실행 직후 Git 저장소 정보를 불러온다.
     /// </summary>
@@ -574,5 +580,6 @@ public class MainWindowViewModel : ViewModelBase
             SelectionStaged?.Add(item?.ToString()!);
         }
     }
+    #endregion
 
 }

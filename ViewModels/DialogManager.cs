@@ -6,6 +6,8 @@ namespace MyGitClient.ViewModels;
 
 public class DialogManager
 {
+	
+	#region Methods
 	/// <summary>
   	/// 사용자에게 알림 메시지를 표출한다.
 	/// </summary>
@@ -17,4 +19,6 @@ public class DialogManager
 	/// </summary>
 	public static async Task<ButtonResult> Confirm(string message, string title = "Confirm")
 		=> await MessageBoxManager.GetMessageBoxStandard(title, message, ButtonEnum.YesNoCancel).ShowAsync();
+	#endregion
+	
 }

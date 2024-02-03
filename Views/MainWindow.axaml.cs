@@ -8,6 +8,18 @@ namespace MyGitClient.Views;
 
 public partial class MainWindow : Window
 {
+
+    #region Constructor
+    public MainWindow()
+    {
+        InitializeComponent();
+
+        _viewModel = new MainWindowViewModel();
+        DataContext = _viewModel;
+        Instance = this;
+    }
+    #endregion
+    
     #region Fields
     /// <summary>
     /// 메인 윈도우 인스턴스
@@ -30,15 +42,7 @@ public partial class MainWindow : Window
     private StackPanel? _historyStackPanel;
     #endregion
 
-    public MainWindow()
-    {
-        InitializeComponent();
-
-        _viewModel = new MainWindowViewModel();
-        DataContext = _viewModel;
-        Instance = this;
-    }
-
+    #region Methods
     private void InitializeComponent()
     {
         AvaloniaXamlLoader.Load(this);
@@ -80,4 +84,6 @@ public partial class MainWindow : Window
             }
         }
     }
+    #endregion
+
 }

@@ -5,6 +5,10 @@ namespace MyGitClient.Models;
 /// </summary>
 public class AuthorInfo(string userName, string userEmail)
 {
+
+    #region Fields
     public string UserName { get; set; } = userName;
     public string UserEmail { get; set; } = userEmail;
+    #endregion
+    
 }
