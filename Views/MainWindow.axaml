@@ -6,7 +6,7 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" Width="1200" Height="650"
         x:Class="MyGitClient.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
-        Icon="/Assets/avalonia-logo.ico"
+        Icon="/Assets/Images/avalonia-logo.ico"
         Title="My Git Client v0.0.1">
 
     <Design.DataContext>
@@ -67,6 +67,7 @@
                 <Button Content="Pull" Margin="5" Width="100" HorizontalContentAlignment="Center" Command="{Binding Pull}" />
                 <Button Content="Push" Margin="5" Width="100" HorizontalContentAlignment="Center" Command="{Binding Push}" />
                 <Button Content="새로고침" Margin="5" Width="100" HorizontalContentAlignment="Center" Command="{Binding Refresh}" />
+                <Button Content="탐색기" Margin="5" Width="100" HorizontalContentAlignment="Center" Command="{Binding OpenFileExplorer}" />
             </StackPanel>
         </Border>
         <Border Width="200" Background="#fff" BorderBrush="#ccc" BorderThickness="0,1,0,0" DockPanel.Dock="Left">
@@ -110,7 +111,13 @@
                                         Command="{Binding $parent[ListBox].((vm:MainWindowViewModel)DataContext).UnstageFileCommand}"
                                         CommandParameter="{Binding}">
                                     
-                                        <TextBlock Text="-" Height="18" FontSize="24" VerticalAlignment="Center" />
+                                        <TextBlock
+                                            Text="-"
+                                            Height="18"
+                                            FontSize="24"
+                                            FontFamily="Hack"
+                                            VerticalAlignment="Center"
+                                        />
                                     </Button>
                                 </DockPanel>
                             </DataTemplate>
@@ -144,7 +151,13 @@
                                         Command="{Binding $parent[ListBox].((vm:MainWindowViewModel)DataContext).StageFileCommand}"
                                         CommandParameter="{Binding}">
                                     
-                                        <TextBlock Text="+" Height="18" FontSize="24" VerticalAlignment="Center" />
+                                        <TextBlock
+                                            Text="+"
+                                            Height="18"
+                                            FontSize="24"
+                                            FontFamily="Hack"
+                                            VerticalAlignment="Center"
+                                        />
                                     </Button>
                                 </DockPanel>
                             </DataTemplate>
