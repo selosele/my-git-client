@@ -54,6 +54,8 @@ public partial class MainWindow : Window
     /// <summary>
     /// 버튼을 클릭, 애플리케이션을 종료한다.
     /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private async void ExitMenuItem_Click(object sender, RoutedEventArgs e)
     {
         var confirm = await DialogManager.Confirm("프로그램을 종료하시겠습니까?");
@@ -66,6 +68,8 @@ public partial class MainWindow : Window
     /// <summary>
     /// 레프트 메뉴 아이템을 클릭한다.
     /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private void LeftListBox_SelectionChange(object sender, SelectionChangedEventArgs e)
     {
         if (e.AddedItems.Count > 0)
