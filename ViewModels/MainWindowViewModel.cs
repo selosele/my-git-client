@@ -1,21 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
-using System.Threading.Tasks;
-using LibGit2Sharp;
-using Avalonia.Controls;
-using ReactiveUI;
 using System.Linq;
 using System.Reactive;
-using MyGitClient.Models;
+using System.Diagnostics;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Threading.Tasks;
+using ReactiveUI;
+using LibGit2Sharp;
+using Avalonia.Controls;
 using Avalonia.Controls.Selection;
+using MyGitClient.Models;
 
 namespace MyGitClient.ViewModels;
 
 public class MainWindowViewModel : ViewModelBase
 {
-
+    
     #region Constructor
     public MainWindowViewModel()
     {
@@ -62,7 +63,7 @@ public class MainWindowViewModel : ViewModelBase
     private readonly List<string> _excludedWatchPath = [];
 
     /// <summary>
-    /// 최신 Repository 텍스트
+    /// 최신 Git 저장소 경로
     /// </summary>
     private string _repositoryPath = "Git 저장소 불러오기...";
     public string RepositoryPath
@@ -191,6 +192,7 @@ public class MainWindowViewModel : ViewModelBase
     /// <summary>
     /// 애플리케이션 실행 직후 Git 저장소 정보를 불러온다.
     /// </summary>
+    /// <param name="repositoryPath"></param>
     public void InitRepoInfo(string repositoryPath)
     {
         // Git 저장소 정보 출력
@@ -203,6 +205,7 @@ public class MainWindowViewModel : ViewModelBase
     /// <summary>
     /// Git 저장소 경로를 선택한다.
     /// </summary>
+    /// <returns></returns>
     [Obsolete]
     public async Task SelectRepoInfo()
     {
@@ -241,6 +244,7 @@ public class MainWindowViewModel : ViewModelBase
     /// <summary>
     /// Git 저장소 정보를 가져와 화면에 표시한다.
     /// </summary>
+    /// <param name="repositoryPath"></param>
     public void UpdateRepoInfo(string repositoryPath)
     {
         using var repo = new Repository(repositoryPath);
@@ -271,6 +275,7 @@ public class MainWindowViewModel : ViewModelBase
     /// <summary>
     /// 커밋 정보 목록을 가져와 화면에 표시한다.
     /// </summary>
+    /// <param name="commits"></param>
     public void UpdateCommitsInfo(IQueryableCommitLog commits)
     {
         var commitList = new List<CommitInfo>();
@@ -292,6 +297,7 @@ public class MainWindowViewModel : ViewModelBase
     /// <summary>
     /// 변경된 파일 목록을 가져와 화면에 표시한다.
     /// </summary>
+    /// <param name="status"></param>
     public void UpdateStatusInfo(RepositoryStatus status)
     {
         var stagedList = new List<string>();
@@ -320,45 +326,9 @@ public class MainWindowViewModel : ViewModelBase
     }
 
     /// <summary>
-    /// 스테이지에 파일을 올린다.
-    /// </summary>
-    private void StageFile(string filePath)
-    {
-        // 저장소 열기
-        using var repo = new Repository(RepositoryPath);
-
-        // git add 수행
-        Commands.Stage(repo, filePath);
-
-        Unstaged?.Remove(filePath);
-        Staged?.Add(filePath);
-
-        // 변경된 파일 목록 출력
-        //UpdateStatusInfo(repo.RetrieveStatus());
-    }
-
-    /// <summary>
-    /// 스테이지에서 파일을 제거한다.
-    /// </summary>
-    private void UnstageFile(string filePath)
-    {
-        // 저장소 열기
-        using var repo = new Repository(RepositoryPath);
-
-        // git reset HEAD [파일경로] 수행
-        Commands.Unstage(repo, filePath);
-
-        Staged?.Remove(filePath);
-        Unstaged?.Add(filePath);
-        SelectionStaged?.Remove(filePath);
-
-        // 변경된 파일 목록 출력
-        //UpdateStatusInfo(repo.RetrieveStatus());
-    }
-
-    /// <summary>
     /// commit을 수행한다.
     /// </summary>
+    /// <returns></returns>
     public async Task Commit()
     {
         // 스테이지에 올라간 파일이 없으면 커밋을 수행하지 않는다.
@@ -384,13 +354,12 @@ public class MainWindowViewModel : ViewModelBase
 
         // git commit 수행
         Commit commit = repo.Commit(CommitMessageText, author, author);
-
-        Console.WriteLine($"Committed: {commit.Sha}");
     }
 
     /// <summary>
     /// pull을 수행한다.
     /// </summary>
+    /// <returns></returns>
     public async Task Pull()
     {
         try
@@ -424,8 +393,8 @@ public class MainWindowViewModel : ViewModelBase
                     //     CredentialsProvider = (url, usernameFromUrl, types) =>
                     //         new UsernamePasswordCredentials
                     //         {
-                    //             Username = "",
-                    //             Password = ""
+                    //             Username = "personal access token",
+                    //             Password = string.Empty
                     //         }
                     // }
                 });
@@ -451,9 +420,42 @@ public class MainWindowViewModel : ViewModelBase
     /// <summary>
     /// push를 수행한다.
     /// </summary>
+    /// <returns></returns>
     public async Task Push()
     {
-        await DialogManager.Alert("준비 중입니다.");
+        // 원격 저장소 이름
+        var remoteName = "origin";
+
+        // 저장소 열기
+        using var repo = new Repository(RepositoryPath);
+
+        // 원격 저장소 가져오기
+        var remote = repo.Network.Remotes[remoteName];
+
+        // 현재 브랜치 가져오기
+        Branch currentBranch = repo.Head;
+        var branchName = currentBranch.FriendlyName;
+
+        // git push 수행
+        // TODO: LibGit2Sharp을 활용한 push는 자격 증명을 필요로 해서 임시방편으로 cmd 실행 로직을 사용
+        // repo.Network.Push(remote, $"refs/heads/{branchName}",
+        //     new PushOptions
+        //     {
+        //         CredentialsProvider = (url, usernameFromUrl, types) =>
+        //             new UsernamePasswordCredentials
+        //             {
+        //                 Username = "personal access token",
+        //                 Password = string.Empty
+        //             }
+        //     });
+        try
+        {
+            await CustomProcess.Start("git", $"push {remoteName} {branchName}:{branchName}");
+        }
+        catch (Exception ex)
+        {
+            await DialogManager.Alert(ex.Message);
+        }
     }
 
     /// <summary>
@@ -463,6 +465,61 @@ public class MainWindowViewModel : ViewModelBase
     {
         // Git 저장소 정보 출력
         UpdateRepoInfo(RepositoryPath);
+    }
+
+    /// <summary>
+    /// 최신 Git 저장소 경로를 Windows 탐색기로 연다.
+    /// </summary>
+    /// <returns></returns>
+    public async Task OpenFileExplorer()
+    {
+        try
+        {
+            Process.Start("explorer.exe", RepositoryPath);
+        }
+        catch (Exception ex)
+        {
+            await DialogManager.Alert(ex.Message);
+        }
+    }
+
+    /// <summary>
+    /// 스테이지에 파일을 올린다.
+    /// </summary>
+    /// <param name="filePath"></param>
+    private void StageFile(string filePath)
+    {
+        // 저장소 열기
+        using var repo = new Repository(RepositoryPath);
+
+        // git add 수행
+        Commands.Stage(repo, filePath);
+
+        Unstaged?.Remove(filePath);
+        Staged?.Add(filePath);
+
+        // 변경된 파일 목록 출력
+        //UpdateStatusInfo(repo.RetrieveStatus());
+    }
+
+    /// <summary>
+    /// 스테이지에서 파일을 제거한다.
+    /// </summary>
+    /// <param name="filePath"></param>
+    private void UnstageFile(string filePath)
+    {
+        // 저장소 열기
+        using var repo = new Repository(RepositoryPath);
+
+        // git reset HEAD [파일경로] 수행
+        Commands.Unstage(repo, filePath);
+
+        Staged?.Remove(filePath);
+        Unstaged?.Add(filePath);
+        SelectionStaged?.Remove(filePath);
+
+        // 변경된 파일 목록 출력
+        //UpdateStatusInfo(repo.RetrieveStatus());
     }
 
     /// <summary>
@@ -480,6 +537,7 @@ public class MainWindowViewModel : ViewModelBase
     /// <summary>
     /// 파일의 변경을 실시간으로 감지한다.
     /// </summary>
+    /// <param name="repositoryPath"></param>
     private void WatchFileChanges(string repositoryPath)
     {
         // FileSystemWatcher 생성
@@ -498,6 +556,8 @@ public class MainWindowViewModel : ViewModelBase
     /// <summary>
     /// 파일의 변경을 감지한다.
     /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private void OnFileChanged(object sender, FileSystemEventArgs e)
     {
         if (IsExcludedPath(e.FullPath)) return;
@@ -509,6 +569,8 @@ public class MainWindowViewModel : ViewModelBase
     /// <summary>
     /// 파일명의 변경을 감지한다.
     /// </summary>
+    /// <param name="source"></param>
+    /// <param name="e"></param>
     private void OnFileRenamed(object source, RenamedEventArgs e)
     {
         if (IsExcludedPath(e.FullPath)) return;
@@ -520,6 +582,8 @@ public class MainWindowViewModel : ViewModelBase
     /// <summary>
     /// 파일 변경 감지 시, 감지에 제외한 디렉터리 발견 여부를 반환한다.
     /// </summary>
+    /// <param name="fullPath"></param>
+    /// <returns></returns>
     private bool IsExcludedPath(string fullPath)
     {
         foreach (var path in _excludedWatchPath)
@@ -559,6 +623,8 @@ public class MainWindowViewModel : ViewModelBase
     /// <summary>
     /// Git 사용자 정보를 반환한다.
     /// </summary>
+    /// <param name="repoConfig"></param>
+    /// <returns></returns>
     private static AuthorInfo GetAuthorInfo(Configuration repoConfig)
     {
         // Git 사용자 정보 가져오기
@@ -571,6 +637,8 @@ public class MainWindowViewModel : ViewModelBase
     /// <summary>
     /// 스테이지에 올라간 파일을 선택한다.
     /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private void OnStagedSelectionChanged(object? sender, SelectionModelSelectionChangedEventArgs e)
     {
         if (sender == null) return;
