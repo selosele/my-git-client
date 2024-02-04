@@ -31,7 +31,7 @@ public class MainWindowViewModel : ViewModelBase
         StageFileCommand = ReactiveCommand.Create<string>(StageFile);
         UnstageFileCommand = ReactiveCommand.Create<string>(UnstageFile);
 
-        // TODO: InitRepoInfo 메서드는 로컬에서만 실행한다. 
+        // TODO: InitRepoInfo 메서드는 테스트 시에만 실행한다. 
         //InitRepoInfo(@"D:\workspace\MyGitClient");
     }
     #endregion
@@ -468,7 +468,7 @@ public class MainWindowViewModel : ViewModelBase
     }
 
     /// <summary>
-    /// 최신 Git 저장소 경로를 Windows 탐색기로 연다.
+    /// 최신 Git 저장소 경로를 탐색기로 연다.
     /// </summary>
     /// <returns></returns>
     public async Task OpenFileExplorer()
