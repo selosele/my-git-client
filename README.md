@@ -1,7 +1,5 @@
 # my-git-client
 
-## 개요
-
 나만의 심플 Git GUI 클라이언트
 
 ## 작업기간
