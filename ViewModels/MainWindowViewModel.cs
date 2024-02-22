@@ -475,7 +475,12 @@ public class MainWindowViewModel : ViewModelBase
     {
         try
         {
-            Process.Start("explorer.exe", RepositoryPath);
+            Process.Start(new ProcessStartInfo()
+            {
+                FileName = RepositoryPath,
+                UseShellExecute = true,
+                Verb = "open"
+            });
         }
         catch (Exception ex)
         {
