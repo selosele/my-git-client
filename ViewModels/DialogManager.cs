@@ -25,6 +25,15 @@ public class DialogManager
 	/// <returns></returns>
 	public static async Task<ButtonResult> Confirm(string message, string title = "Confirm")
 		=> await MessageBoxManager.GetMessageBoxStandard(title, message, ButtonEnum.YesNoCancel).ShowAsync();
+
+	/// <summary>
+	/// 사용자에게 정보 메시지를 표출한다.
+	/// </summary>
+	/// <param name="message"></param>
+	/// <param name="title"></param>
+	/// <returns></returns>
+	public static async Task Info(string message, string title = "Infomation")
+		=> await Alert(message, title);
 	#endregion
 	
 }
