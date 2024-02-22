@@ -32,12 +32,14 @@
                 <Separator/>
                 <MenuItem Header="_Exit" Click="ExitMenuItem_Click" />
             </MenuItem>
+            <!--
             <MenuItem Header="_편집" Foreground="#fff">
-                <MenuItem Header="복사" />
+                <MenuItem Header="복사" Click="CopyMenuItem_Click" />
                 <MenuItem Header="붙여넣기" />
             </MenuItem>
+            -->
             <MenuItem Header="_도움말" Foreground="#fff">
-                <MenuItem Header="My Git Client에 대해서" />
+                <MenuItem Header="이 애플리케이션에 대해서" Click="AboutAppMenuItem_Click" />
             </MenuItem>
         </Menu>
 
