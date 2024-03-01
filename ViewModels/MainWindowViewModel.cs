@@ -217,7 +217,10 @@ public class MainWindowViewModel : ViewModelBase
 
         var selectedFolderPath = await folderDialog.ShowAsync(Views.MainWindow.Instance!);
 
-        if (string.IsNullOrWhiteSpace(selectedFolderPath) || !Directory.Exists(selectedFolderPath))
+        if (string.IsNullOrWhiteSpace(selectedFolderPath))
+            return;
+
+        if (!Directory.Exists(selectedFolderPath))
         {
             // 경로가 유효하지 않을 경우 사용자에게 메시지를 표출한다.
             await DialogManager.Alert("유효하지 않은 저장소 경로입니다.");
