@@ -217,27 +217,24 @@ public class MainWindowViewModel : ViewModelBase
 
         var selectedFolderPath = await folderDialog.ShowAsync(Views.MainWindow.Instance!);
 
-        if (!string.IsNullOrEmpty(selectedFolderPath))
+        if (string.IsNullOrWhiteSpace(selectedFolderPath) || !Directory.Exists(selectedFolderPath))
         {
-            try
-            {
-                if (string.IsNullOrWhiteSpace(selectedFolderPath) || !Directory.Exists(selectedFolderPath))
-                {
-                    // 경로가 유효하지 않을 경우 사용자에게 메시지를 표출한다.
-                    await DialogManager.Alert("유효하지 않은 저장소 경로입니다.");
-                    return;
-                }
+            // 경로가 유효하지 않을 경우 사용자에게 메시지를 표출한다.
+            await DialogManager.Alert("유효하지 않은 저장소 경로입니다.");
+            return;
+        }
 
-                // Git 저장소 정보 출력
-                UpdateRepoInfo(selectedFolderPath);
+        try
+        {
+            // Git 저장소 정보 출력
+            UpdateRepoInfo(selectedFolderPath);
 
-                // Git 로컬 저장소 파일의 변경을 실시간으로 감지
-                FireWatchFileChanges();
-            }
-            catch (Exception ex)
-            {
-                await DialogManager.Alert(ex.Message);
-            }
+            // Git 로컬 저장소 파일의 변경을 실시간으로 감지
+            FireWatchFileChanges();
+        }
+        catch (Exception ex)
+        {
+            await DialogManager.Alert(ex.Message);
         }
     }
 
@@ -248,8 +245,8 @@ public class MainWindowViewModel : ViewModelBase
     public void UpdateRepoInfo(string repositoryPath)
     {
         using var repo = new Repository(repositoryPath);
-        Branch currentBranch = repo.Head;
-        Commit latestCommit = currentBranch.Tip;
+        var currentBranch = repo.Head;
+        var latestCommit = currentBranch.Tip;
 
         // Git 사용자 정보 가져오기
         var authorInfo = GetAuthorInfo(repo.Config);
@@ -345,15 +342,14 @@ public class MainWindowViewModel : ViewModelBase
             return;
         }
 
-        // TODO: ListBox에서 선택한 항목들만 커밋할 수 있도록 개선하기
         using var repo = new Repository(RepositoryPath);
 
         // Git 사용자 정보 가져오기
         var authorInfo = GetAuthorInfo(repo.Config);
-        var author = new Signature(authorInfo.UserName, authorInfo.UserEmail, DateTimeOffset.Now);
+        var signature = new Signature(authorInfo.UserName, authorInfo.UserEmail, DateTimeOffset.Now);
 
         // git commit 수행
-        Commit commit = repo.Commit(CommitMessageText, author, author);
+        Commit commit = repo.Commit(CommitMessageText, signature, signature);
     }
 
     /// <summary>
@@ -371,13 +367,13 @@ public class MainWindowViewModel : ViewModelBase
             using var repo = new Repository(RepositoryPath);
 
             // 현재 브랜치 가져오기
-            Branch currentBranch = repo.Head;
+            var currentBranch = repo.Head;
 
             // 원격 브랜치 가져오기
-            Branch remoteBranch = repo.Branches[$"{remoteName}/{currentBranch.FriendlyName}"];
+            var remoteBranch = repo.Branches[$"{remoteName}/{currentBranch.FriendlyName}"];
 
             // 원격 저장소 정보 가져오기
-            Remote remote = repo.Network.Remotes[remoteName];
+            var remote = repo.Network.Remotes[remoteName];
 
             // Git 사용자 정보 가져오기
             var authorInfo = GetAuthorInfo(repo.Config);
@@ -433,7 +429,7 @@ public class MainWindowViewModel : ViewModelBase
         var remote = repo.Network.Remotes[remoteName];
 
         // 현재 브랜치 가져오기
-        Branch currentBranch = repo.Head;
+        var currentBranch = repo.Head;
         var branchName = currentBranch.FriendlyName;
 
         // git push 수행
@@ -456,6 +452,20 @@ public class MainWindowViewModel : ViewModelBase
         {
             await DialogManager.Alert(ex.Message);
         }
+    }
+
+    /// <summary>
+    /// commit을 취소한다.
+    /// </summary>
+    public void Reset()
+    {
+        using var repo = new Repository(RepositoryPath);
+        
+        var trackedBranch = repo.Head.TrackedBranch;
+        var originHeadCommit = repo.ObjectDatabase.FindMergeBase(repo.Branches[trackedBranch.FriendlyName].Tip, repo.Head.Tip);
+        
+        // git reset 수행
+        repo.Reset(ResetMode.Soft, originHeadCommit);
     }
 
     /// <summary>
