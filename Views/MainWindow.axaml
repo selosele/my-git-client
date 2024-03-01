@@ -68,6 +68,7 @@
                 <Button Content="Commit" Margin="5" Width="100" HorizontalContentAlignment="Center" Command="{Binding Commit}" />
                 <Button Content="Pull" Margin="5" Width="100" HorizontalContentAlignment="Center" Command="{Binding Pull}" />
                 <Button Content="Push" Margin="5" Width="100" HorizontalContentAlignment="Center" Command="{Binding Push}" />
+                <Button Content="Reset" Margin="5" Width="100" HorizontalContentAlignment="Center" Command="{Binding Reset}" />
                 <Button Content="새로고침" Margin="5" Width="100" HorizontalContentAlignment="Center" Command="{Binding Refresh}" />
                 <Button Content="탐색기" Margin="5" Width="100" HorizontalContentAlignment="Center" Command="{Binding OpenFileExplorer}" />
             </StackPanel>
