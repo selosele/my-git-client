@@ -352,7 +352,7 @@ public class MainWindowViewModel : ViewModelBase
         var signature = new Signature(authorInfo.UserName, authorInfo.UserEmail, DateTimeOffset.Now);
 
         // git commit 수행
-        Commit commit = repo.Commit(CommitMessageText, signature, signature);
+        var commit = repo.Commit(CommitMessageText, signature, signature);
     }
 
     /// <summary>
