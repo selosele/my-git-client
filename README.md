@@ -11,6 +11,7 @@
 - `.NET` - v8.0.101
 - `Avalonia` - v11.0.7
 - `LibGit2Sharp` - v0.29.0
+- `Windows` - 21H1
 
 ## 개발환경 구동 절차
 
