@@ -286,7 +286,7 @@ public class MainWindowViewModel : ViewModelBase
                     commit.Sha,
                     commit.Author.Name,
                     commit.Author.Email,
-                    commit.Author.When.ToString("dd MMM yyyy HH:mm"),
+                    commit.Author.When.ToString("yyyy-MM-dd HH:mm:ss"),
                     commit.Message.Trim()
                 )
             );
