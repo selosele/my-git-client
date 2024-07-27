@@ -99,7 +99,7 @@ public partial class MainWindow : Window
         await DialogManager.Info(@"
             이 애플리케이션은 .NET(Avalonia)로 개발되었습니다.
             Copyright selosele 2024 All Rights Reserved.
-            버전 0.0.1
+            버전 1.0.0
         ");
     }
     #endregion
