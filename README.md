@@ -1,5 +1,7 @@
 # my-git-client
 
+![](https://res.cloudinary.com/dbrgfvqgb/image/upload/v1723079531/mygitclient_t87mmf.jpg)
+
 나만의 심플 Git GUI 클라이언트
 
 ## 작업기간
