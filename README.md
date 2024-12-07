@@ -2,13 +2,9 @@
 
 Git 작업을 수행할 수 있는 심플한 GUI 클라이언트입니다.
 
----
-
 ## 작업 기간
 
 - **2024.01.19** ~ **2024.03.01**
-
----
 
 ## 기술 스택 및 개발 환경
 
@@ -21,8 +17,6 @@ Git 작업을 수행할 수 있는 심플한 GUI 클라이언트입니다.
 ### 개발 환경
 
 - Windows에서 테스트 및 구동 확인
-
----
 
 ## 설치 및 실행
 
@@ -40,8 +34,6 @@ dotnet build
 dotnet run
 ```
 
----
-
 ## 기능 목록
 
 현재 구현된 기능 목록입니다:
@@ -52,20 +44,14 @@ dotnet run
 - 커밋 히스토리 확인
 - 변경된 파일 확인
 
----
-
 ## 라이선스
 
 이 프로젝트는 [MIT 라이선스](https://opensource.org/licenses/MIT) 하에 배포됩니다.
-
----
 
 ## 관련 링크
 
 - [GitHub Repository](https://github.com/selosele/my-git-client)
 - [Documentation](https://github.com/selosele/my-git-client/blob/master/README.md)
-
----
 
 ## 스크린샷
 
