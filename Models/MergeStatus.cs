@@ -5,8 +5,13 @@ namespace MyGitClient.Models;
 /// </summary>
 public enum MergeStatus
 {
-    // 변경 사항 미존재
+    /// <summary>
+    /// 변경 사항 미존재
+    /// </summary>
     UpToDate,
-    // 변경 사항 존재
+    
+    /// <summary>
+    /// 변경 사항 존재
+    /// </summary>
     FastForward
 }
