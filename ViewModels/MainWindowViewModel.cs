@@ -192,7 +192,7 @@ public class MainWindowViewModel : ViewModelBase
     /// <summary>
     /// 애플리케이션 실행 직후 Git 저장소 정보를 불러온다.
     /// </summary>
-    /// <param name="repositoryPath"></param>
+    /// <param name="repositoryPath">Git 저장소 경로</param>
     public void InitRepoInfo(string repositoryPath)
     {
         // Git 저장소 정보 출력
@@ -205,7 +205,6 @@ public class MainWindowViewModel : ViewModelBase
     /// <summary>
     /// Git 저장소 경로를 선택한다.
     /// </summary>
-    /// <returns></returns>
     [Obsolete]
     public async Task SelectRepoInfo()
     {
@@ -244,7 +243,7 @@ public class MainWindowViewModel : ViewModelBase
     /// <summary>
     /// Git 저장소 정보를 가져와 화면에 표시한다.
     /// </summary>
-    /// <param name="repositoryPath"></param>
+    /// <param name="repositoryPath">Git 저장소 경로</param>
     public void UpdateRepoInfo(string repositoryPath)
     {
         using var repo = new Repository(repositoryPath);
@@ -275,7 +274,7 @@ public class MainWindowViewModel : ViewModelBase
     /// <summary>
     /// 커밋 정보 목록을 가져와 화면에 표시한다.
     /// </summary>
-    /// <param name="commits"></param>
+    /// <param name="commits">커밋 정보 목록</param>
     public void UpdateCommitsInfo(IQueryableCommitLog commits)
     {
         var commitList = new List<CommitInfo>();
@@ -291,13 +290,13 @@ public class MainWindowViewModel : ViewModelBase
                 )
             );
         }
-        Commits = new ObservableCollection<CommitInfo>(commitList);
+        Commits = [..commitList];
     }
 
     /// <summary>
     /// 변경된 파일 목록을 가져와 화면에 표시한다.
     /// </summary>
-    /// <param name="status"></param>
+    /// <param name="status">파일 상태</param>
     public void UpdateStatusInfo(RepositoryStatus status)
     {
         var stagedList = new List<string>();
@@ -328,7 +327,6 @@ public class MainWindowViewModel : ViewModelBase
     /// <summary>
     /// commit을 수행한다.
     /// </summary>
-    /// <returns></returns>
     public async Task Commit()
     {
         // 스테이지에 올라간 파일이 없으면 커밋을 수행하지 않는다.
@@ -358,7 +356,6 @@ public class MainWindowViewModel : ViewModelBase
     /// <summary>
     /// pull을 수행한다.
     /// </summary>
-    /// <returns></returns>
     public async Task Pull()
     {
         try
@@ -419,7 +416,6 @@ public class MainWindowViewModel : ViewModelBase
     /// <summary>
     /// push를 수행한다.
     /// </summary>
-    /// <returns></returns>
     public async Task Push()
     {
         // 원격 저장소 이름
@@ -483,7 +479,6 @@ public class MainWindowViewModel : ViewModelBase
     /// <summary>
     /// 최신 Git 저장소 경로를 탐색기로 연다.
     /// </summary>
-    /// <returns></returns>
     public async Task OpenFileExplorer()
     {
         try
@@ -504,7 +499,7 @@ public class MainWindowViewModel : ViewModelBase
     /// <summary>
     /// 스테이지에 파일을 올린다.
     /// </summary>
-    /// <param name="filePath"></param>
+    /// <param name="filePath">파일 경로를 포함한 파일명</param>
     private void StageFile(string filePath)
     {
         // 저장소 열기
@@ -523,7 +518,7 @@ public class MainWindowViewModel : ViewModelBase
     /// <summary>
     /// 스테이지에서 파일을 제거한다.
     /// </summary>
-    /// <param name="filePath"></param>
+    /// <param name="filePath">파일 경로를 포함한 파일명</param>
     private void UnstageFile(string filePath)
     {
         // 저장소 열기
@@ -555,7 +550,7 @@ public class MainWindowViewModel : ViewModelBase
     /// <summary>
     /// 파일의 변경을 실시간으로 감지한다.
     /// </summary>
-    /// <param name="repositoryPath"></param>
+    /// <param name="repositoryPath">Git 저장소 경로</param>
     private void WatchFileChanges(string repositoryPath)
     {
         // FileSystemWatcher 생성
@@ -574,8 +569,8 @@ public class MainWindowViewModel : ViewModelBase
     /// <summary>
     /// 파일의 변경을 감지한다.
     /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
+    /// <param name="sender">이벤트를 발생시킨 객체</param>
+    /// <param name="e">이벤트 인수</param>
     private void OnFileChanged(object sender, FileSystemEventArgs e)
     {
         if (IsExcludedPath(e.FullPath)) return;
@@ -587,9 +582,9 @@ public class MainWindowViewModel : ViewModelBase
     /// <summary>
     /// 파일명의 변경을 감지한다.
     /// </summary>
-    /// <param name="source"></param>
-    /// <param name="e"></param>
-    private void OnFileRenamed(object source, RenamedEventArgs e)
+    /// <param name="sender">이벤트를 발생시킨 객체</param>
+    /// <param name="e">이벤트 인수</param>
+    private void OnFileRenamed(object sender, RenamedEventArgs e)
     {
         if (IsExcludedPath(e.FullPath)) return;
 
@@ -600,8 +595,7 @@ public class MainWindowViewModel : ViewModelBase
     /// <summary>
     /// 파일 변경 감지 시, 감지에 제외한 디렉터리 발견 여부를 반환한다.
     /// </summary>
-    /// <param name="fullPath"></param>
-    /// <returns></returns>
+    /// <param name="fullPath">파일 경로를 포함한 파일명</param>
     private bool IsExcludedPath(string fullPath)
     {
         foreach (var path in _excludedWatchPath)
@@ -641,8 +635,7 @@ public class MainWindowViewModel : ViewModelBase
     /// <summary>
     /// Git 사용자 정보를 반환한다.
     /// </summary>
-    /// <param name="repoConfig"></param>
-    /// <returns></returns>
+    /// <param name="repoConfig">Git 저장소 설정</param>
     private static AuthorInfo GetAuthorInfo(Configuration repoConfig)
     {
         // Git 사용자 정보 가져오기
@@ -655,8 +648,8 @@ public class MainWindowViewModel : ViewModelBase
     /// <summary>
     /// 스테이지에 올라간 파일을 선택한다.
     /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
+    /// <param name="sender">이벤트를 발생시킨 객체</param>
+    /// <param name="e">이벤트 인수</param>
     private void OnStagedSelectionChanged(object? sender, SelectionModelSelectionChangedEventArgs e)
     {
         if (sender == null) return;

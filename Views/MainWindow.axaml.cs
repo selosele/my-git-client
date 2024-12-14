@@ -1,3 +1,4 @@
+using System;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
@@ -54,8 +55,8 @@ public partial class MainWindow : Window
     /// <summary>
     /// 버튼을 클릭, 애플리케이션을 종료한다.
     /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
+    /// <param name="sender">이벤트를 발생시킨 객체</param>
+    /// <param name="e">이벤트 인수</param>
     private async void ExitMenuItem_Click(object sender, RoutedEventArgs e)
     {
         var confirm = await DialogManager.Confirm("프로그램을 종료하시겠습니까?");
@@ -68,8 +69,8 @@ public partial class MainWindow : Window
     /// <summary>
     /// 레프트 메뉴 아이템을 클릭한다.
     /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
+    /// <param name="sender">이벤트를 발생시킨 객체</param>
+    /// <param name="e">이벤트 인수</param>
     private void LeftListBox_SelectionChange(object sender, SelectionChangedEventArgs e)
     {
         if (e.AddedItems.Count > 0)
@@ -92,15 +93,16 @@ public partial class MainWindow : Window
     /// <summary>
     /// "이 애플리케이션에 대해서" 메뉴 아이템을 클릭한다.
     /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
+    /// <param name="sender">이벤트를 발생시킨 객체</param>
+    /// <param name="e">이벤트 인수</param>
     private async void AboutAppMenuItem_Click(object sender, RoutedEventArgs e)
     {
-        await DialogManager.Info(@"
-            이 애플리케이션은 .NET(Avalonia)로 개발되었습니다.
-            Copyright selosele 2024 All Rights Reserved.
-            버전 0.0.1
-        ");
+        var message = string.Join(Environment.NewLine,
+            "이 애플리케이션은 .NET(Avalonia)로 개발되었습니다.",
+            "Copyright selosele 2024 All Rights Reserved.",
+            "버전 0.0.1"
+        );
+        await DialogManager.Info(message);
     }
     #endregion
 
