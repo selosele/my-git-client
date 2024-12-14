@@ -48,11 +48,6 @@ dotnet run
 
 이 프로젝트는 [MIT 라이선스](https://opensource.org/licenses/MIT) 하에 배포됩니다.
 
-## 관련 링크
-
-- [GitHub Repository](https://github.com/selosele/my-git-client)
-- [Documentation](https://github.com/selosele/my-git-client/blob/master/README.md)
-
 ## 스크린샷
 
 ![](https://res.cloudinary.com/dbrgfvqgb/image/upload/v1723079531/mygitclient_t87mmf.jpg)
