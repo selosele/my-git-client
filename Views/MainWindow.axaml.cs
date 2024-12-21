@@ -10,7 +10,7 @@ namespace MyGitClient.Views;
 public partial class MainWindow : Window
 {
 
-    #region Constructor
+    #region [생성자]
     public MainWindow()
     {
         InitializeComponent();
@@ -21,7 +21,7 @@ public partial class MainWindow : Window
     }
     #endregion
     
-    #region Fields
+    #region [필드]
     /// <summary>
     /// 메인 윈도우 인스턴스
     /// </summary>
@@ -43,7 +43,7 @@ public partial class MainWindow : Window
     private StackPanel? _historyStackPanel;
     #endregion
 
-    #region Methods
+    #region [메서드]
     private void InitializeComponent()
     {
         AvaloniaXamlLoader.Load(this);

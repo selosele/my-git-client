@@ -17,7 +17,7 @@ namespace MyGitClient.ViewModels;
 public class MainWindowViewModel : ViewModelBase
 {
     
-    #region Constructor
+    #region [생성자]
     public MainWindowViewModel()
     {
         LeftMenuItems = ["파일 상태", "History"];
@@ -36,7 +36,7 @@ public class MainWindowViewModel : ViewModelBase
     }
     #endregion
 
-    #region Fields
+    #region [필드]
     /// <summary>
     /// 스테이지에 올라간 파일의 Selection 인스턴스
     /// </summary>
@@ -188,7 +188,7 @@ public class MainWindowViewModel : ViewModelBase
     public ObservableCollection<string>? LeftMenuItems { get; set; }
     #endregion
 
-    #region Methods
+    #region [메서드]
     /// <summary>
     /// 애플리케이션 실행 직후 Git 저장소 정보를 불러온다.
     /// </summary>

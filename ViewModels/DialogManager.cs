@@ -7,7 +7,7 @@ namespace MyGitClient.ViewModels;
 public class DialogManager
 {
 	
-	#region Methods
+	#region [메서드]
 	/// <summary>
 	/// 사용자에게 알림 메시지를 표출한다.
 	/// </summary>

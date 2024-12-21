@@ -8,7 +8,7 @@ namespace MyGitClient.Models;
 public class AuthorInfo(string userName, string userEmail)
 {
 
-    #region Fields
+    #region [필드]
     /// <summary>
     /// Git 사용자 이름
     /// </summary>

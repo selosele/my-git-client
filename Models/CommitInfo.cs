@@ -11,7 +11,7 @@ namespace MyGitClient.Models;
 public class CommitInfo(string sha, string authorName, string authorEmail, string authorWhen, string message)
 {
 
-    #region Fields
+    #region [필드]
     /// <summary>
     /// 커밋의 고유 식별자인 SHA
     /// </summary>

@@ -11,7 +11,7 @@ namespace MyGitClient.ViewModels;
 public class CustomProcess
 {
 
-    #region Methods
+    #region [메서드]
     /// <summary>
     /// 외부 프로세스를 실행한다.
     /// </summary>
