@@ -44,9 +44,9 @@ dotnet run
 - 커밋 히스토리 확인
 - 변경된 파일 확인
 
-## 라이선스
+## 라이센스
 
-이 프로젝트는 [MIT 라이선스](https://opensource.org/licenses/MIT) 하에 배포됩니다.
+이 프로젝트는 MIT 라이센스 하에 배포됩니다.
 
 ## 스크린샷
 
