@@ -11,7 +11,7 @@ Git 작업을 수행할 수 있는 심플한 GUI 클라이언트입니다.
 - **.NET** - v8.0
 - **Avalonia** - v11.0.7  
 - **LibGit2Sharp** - v0.29.0
-- Windows에서 개발 및 구동 확인
+- **Windows**에서 개발 및 구동 확인
 
 ## 빌드 및 실행
 
