@@ -31,8 +31,11 @@ public class MainWindowViewModel : ViewModelBase
         StageFileCommand = ReactiveCommand.Create<string>(StageFile);
         UnstageFileCommand = ReactiveCommand.Create<string>(UnstageFile);
 
-        // TODO: InitRepoInfo 메서드는 테스트 시에만 실행한다. 
-        //InitRepoInfo(@"D:\workspace\MyGitClient");
+        // Windows 컨텍스트 메뉴 클릭으로 실행 시
+        if (!string.IsNullOrEmpty(AppState.SelectedPath))
+        {
+            InitRepoInfo(AppState.SelectedPath);
+        }
     }
     #endregion
 
@@ -190,16 +193,23 @@ public class MainWindowViewModel : ViewModelBase
 
     #region [메서드]
     /// <summary>
-    /// 애플리케이션 실행 직후 Git 저장소 정보를 불러온다.
+    /// 프로그램 실행 직후 Git 저장소 정보를 불러온다.
     /// </summary>
     /// <param name="repositoryPath">Git 저장소 경로</param>
-    public void InitRepoInfo(string repositoryPath)
+    public async void InitRepoInfo(string repositoryPath)
     {
-        // Git 저장소 정보 출력
-        UpdateRepoInfo(repositoryPath);
+        try
+        {
+            // Git 저장소 정보 출력
+            UpdateRepoInfo(repositoryPath);
 
-        // Git 로컬 저장소 파일의 변경을 실시간으로 감지
-        FireWatchFileChanges();
+            // Git 로컬 저장소 파일의 변경을 실시간으로 감지
+            FireWatchFileChanges();
+        }
+        catch (Exception ex)
+        {
+            await DialogManager.Alert(ex.Message);
+        }
     }
 
     /// <summary>
